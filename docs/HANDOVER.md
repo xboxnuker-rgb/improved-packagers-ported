@@ -2,10 +2,11 @@
 
 ## Schedule I 0.4.6f13 IL2CPP compatibility port
 
-- Status: `IN_PROGRESS`
+- Status: `AWAITING_RUNTIME_VERIFICATION`
 - Branch: `fix/schedule-i-0.4.6f13-compat`
 - Base: upstream `master` at `4519a1f48e3f461aa78681bb5a48bd683e2b6962`
-- Planned pull request account: `xboxnuker-rgb`
+- Compatibility implementation: `4e9cb2f9decedc9a3299cec96f23974f2ff6f9ec`
+- Requested pull request account: `xboxnuker-rgb`
 
 ### Scope
 
@@ -19,23 +20,70 @@ Port Improved Packagers 2.0.0 to Schedule I 0.4.6f13 IL2CPP, produce a locally i
 - Schedule I: `0.4.6f13`
 - Unity: `2022.3.62f2`
 - MelonLoader: `0.7.0 Open-Beta`, net6
+- .NET SDK used for the build: `8.0.425`
 - No reference binaries or logs belong in Git.
 
-### Confirmed API drift
+### Confirmed API drift and fixes
 
-- `PackagingStationCanvas.SetIsOpen(PackagingStation, bool)` was removed; `Open(PackagingStation)` is the replacement.
-- `PackagingStationCanvas.PackagingStation` was removed; `Station` is the replacement property.
-- `PackagingStation.DestroyItem()` was removed; `Destroy()` is the replacement lifecycle method.
+- Replaced the removed `PackagingStationCanvas.SetIsOpen(PackagingStation, bool)` patch with `Open(PackagingStation)`.
+- Replaced `PackagingStationCanvas.PackagingStation` with the renamed `Station` property.
+- Replaced the removed `PackagingStation.DestroyItem()` patch target with `Destroy()`.
+- Fixed `StationModeRegistry.Load()` so a missing first-run file returns without attempting to read it.
 - `PackagerConfiguration(ConfigurationReplicator, IConfigurable, Packager)` still exists. Improved Packagers does not patch it, so the logged backend fallback must be attributed through an isolated runtime test rather than a speculative change.
+
+### Static and build verification
+
+The following commands completed successfully against the supplied 0.4.6f13 references:
+
+```powershell
+$melonLoaderRoot = "<out-of-tree-path-to-MelonLoader>"
+$dotnet = "<path-to-dotnet-8.0.425>"
+.\scripts\verify-game-api.ps1 -MelonLoaderRoot $melonLoaderRoot
+.\scripts\build-il2cpp.ps1 -MelonLoaderRoot $melonLoaderRoot -DotNet $dotnet
+```
+
+Evidence:
+
+- Every Harmony target and required property was found with exactly one expected signature.
+- The `PackagerConfiguration` constructor was also observed with its logged signature.
+- Release build completed with zero warnings and zero errors.
+- `ImprovedPackagers.dll` targets `.NETCoreApp,Version=v6.0`.
+- Assembly version and `MelonInfo` version are both `2.0.1`.
+- DLL SHA-256: `40234D992623FDBFF0A48568DCD0E16AA8B7CA7A34C17764120052EAB3062C2D`
+- Alex package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13.zip`
+- Package SHA-256: `35047B9DC9F894E5E340370F5C327AB70E7D8503448AB7F2DFEAB731ED8E47CB`
+- The distributable contains no copied game, Unity, MelonLoader, Harmony, or interop dependencies.
+
+### Runtime verification still required
+
+The build host does not have a runnable Schedule I installation. Alex should test the packaged DLL first with only Improved Packagers enabled, then with the normal mod set. Record both logs and verify:
+
+- No `Undefined target method`, `HarmonyException`, or missing `ImprovedPackagers.json` error.
+- Packaging mode still packages.
+- Unpack mode unpacks and remains selected after save/reload.
+- Loading docks retain Load Only, Unload Only, and Dual behavior.
+- Destroying a station removes its persisted mode.
+
+Compare isolated and full-set logs. Treat the `PackagerConfiguration::.ctor` backend fallback as a separate mod/loader interaction unless it reproduces with only Improved Packagers installed.
+
+### Alex full-mod-set evidence
+
+Received `Latest.log` from the full mod set on 2026-09-17.
+
+- Log SHA-256: `77D9F6F1B8CC3AF312F0621A64B60B721048A17D180DFF395B00FFA1AB16B1C3`
+- Schedule I `0.4.6f13`, Unity `2022.3.62f2`, and MelonLoader `0.7.0 Open-Beta` are confirmed.
+- MelonLoader loaded Improved Packagers `2.0.1` with DLL SHA-256 `40234D992623FDBFF0A48568DCD0E16AA8B7CA7A34C17764120052EAB3062C2D`.
+- No `Undefined target method`, `HarmonyException`, or missing `ImprovedPackagers.json` error appears.
+- The `PackagerConfiguration::.ctor` backend fallback remains present in this full mod set. Improved Packagers does not target this constructor; isolated comparison is still needed before attribution.
+- The log contains an unrelated `DeliverySpotsPlus` coroutine exception and repeated `Worker Collision Reborn` missing-capsule messages.
+- The log alone cannot prove pack/unpack behavior, save/reload persistence, dock direction behavior, or registry cleanup when a station is destroyed.
+
+### Pull request handoff
+
+Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
+
+The requested PR account is `xboxnuker-rgb`; the current machine credential resolves to `GSVS-Dev01`, so pushing the branch requires the requested account to be authenticated or an explicit decision to use the currently authenticated fork.
 
 ### Overlapping work
 
-Upstream PR #2 addresses an older unpacking defect but is not directly compatible with 0.4.6f13: it references removed networking helpers and obsolete method overloads. Do not cherry-pick it wholesale.
-
-### Required completion evidence
-
-- API verification script passes against the supplied f13 assembly.
-- Release IL2CPP build succeeds and contains no copied game dependencies.
-- Packaged DLL metadata and SHA-256 are recorded here.
-- Alex completes the isolated and normal-mod-set runtime checklist from the artifact package.
-- Draft PR includes exact static/build evidence and clearly marks runtime verification status.
+Upstream PR #2 addresses an older unpacking defect but is not directly compatible with 0.4.6f13: it references removed networking helpers and obsolete method overloads. Do not cherry-pick it wholesale. Port only a specific part later if an f13 gameplay test reproduces that older defect, preserving attribution.

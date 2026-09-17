@@ -1,31 +1,51 @@
 # Improved Packagers
-Packagers can use unpackage mode at packing stations (baggies, jars or bricks) and load (and still unload) vehicles in loading docks.
-- **Requires:** [MelonLoader](https://melonwiki.xyz/#/)
-- **Recommended:** [Mod Manager Phone App](https://www.nexusmods.com/schedule1/mods/397)
----
-## General Information
-### Installation
-- Drop the .dll into `%ScheduleOne Install%/Mods/`.
-- Loading Bays config saved in `UserData/MelonPreferences.cfg`.
-- Packing Station unpack marker saved in `UserData/ImprovedPackers.json`.
-- Delete to uninstall.
+
+Improved Packagers lets Packagers follow each Packaging Station's pack or unpack mode and use routes to load vehicles parked in Loading Bays.
+
+## Compatibility
+
+| Schedule I branch | Backend | Status |
+| --- | --- | --- |
+| Main/default 0.4.6f13 | IL2CPP | Version 2.0.1 builds against the matching generated assemblies; live-game verification remains pending. |
+| Alternate | Mono | Legacy source retained; no new compatibility claim is made by version 2.0.1. |
+
+IL2CPP and Mono builds are not interchangeable.
+
+## Installation
+
+1. Close Schedule I.
+2. Remove every older Improved Packagers DLL from `%ScheduleOne Install%/Mods/`, including `Main-ImprovedPackagers.dll`.
+3. Copy `ImprovedPackagers.dll` into the `Mods` directory.
+4. Start the game.
+
+Only one Improved Packagers DLL should be installed at a time.
+
+Configuration is stored in:
+
+- Loading Bay preferences: `UserData/MelonPreferences.cfg`
+- Packaging Station modes: `UserData/ImprovedPackagers.json`
+
+On first installation, open each existing Packaging Station UI once so the mod can observe and persist its selected mode.
+
+## Features
+
 ### Unpackage
-- Packagers will obey the pack / unpack setting of assigned packaging stations.
-- They will unpack baggies, jars, or bricks; whichever is loaded.
-- Still requires an empty or matching product in input slot (same as player unpacking).
-- **`Important:`** You must open the UI of an any existing unpack station after you first install the mod. Due to how the stations work the mod can't read the un/pack arrow externally. Once viewed they are persisted automatically, and changes are tracked.
-### Load Vehicles
-- Packagers will use routes from storages and equipment to loading dock vehicles.
-- The main branch (Il2Cpp) version allows each dock to be set to Load only, Unload only, or Dual (default).
-- Alternate (Mono) version only has On / Off setting.
-- Be careful when using Dual / On setting, that two Packagers don't get stuck in a loop together.
-- Obeys item filters, stack size, and other normal mechanics.
-- Configure each loading dock in *Mod Manager Phone App* or the config file above.
----
-## Reference
-### Source Code
-- This program is open source under the `MIT license`. I encourage you to learn from it or use it in your own creations.
-- [Github Repository](http://github.com/GuysWeForgotDre/PackagersLoadVehicles)
-- Formerally called *Packagers Load Vehicles*
-### Contact
-Discord: `OnlyMurdersSometimes` | Github: `GuysWeForgotDre`
+
+- Packagers obey the pack/unpack setting of assigned Packaging Stations.
+- They can unpack baggies, jars, or bricks.
+- An empty or matching product must be available in the input slot, as with manual unpacking.
+
+### Load vehicles
+
+- Packagers can use routes from storage and equipment to vehicles in Loading Bays.
+- The IL2CPP build supports Load Only, Unload Only, and Dual direction per dock.
+- Item filters, stack sizes, and normal route mechanics still apply.
+- Two Packagers using Dual mode can move items in a loop; configure routes deliberately.
+
+## Troubleshooting
+
+- `Undefined target method` means the DLL was built for a different game version.
+- A first-run missing-file error for `ImprovedPackagers.json` indicates an older build is still installed.
+- The `PackagerConfiguration::.ctor` IL2CPP backend fallback is not patched by this mod. Reproduce it with an isolated mod set before attributing it to Improved Packagers.
+
+Full build and contribution documentation is available in the source repository: [GuysWeForgotDre/Improved-Packagers](https://github.com/GuysWeForgotDre/Improved-Packagers).
