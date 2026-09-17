@@ -83,6 +83,16 @@ namespace ImprovedPackagers
                 out invalidReason);
         }
 
+        public static bool HasCarriedUnpackProduct(Packager packager)
+        {
+            var behaviour = packager?.MoveItemBehaviour;
+            var template = behaviour?.itemToRetrieveTemplate;
+            return !(behaviour?.assignedRoute is null) &&
+                TryGetUnpackSource(behaviour.assignedRoute, out _) &&
+                !(template is null) &&
+                behaviour.Npc?.Inventory?.GetIdenticalItemAmount(template) > 0;
+        }
+
         public static void LogRouteFailureOnce(PackagingStation station, string reason)
         {
             if (station is null || string.IsNullOrEmpty(reason)) return;
@@ -260,6 +270,14 @@ namespace ImprovedPackagers
         {
             try
             {
+                if (UnpackTransitRouting.HasCarriedUnpackProduct(__instance))
+                {
+                    __result = null;
+                    __instance.MoveItemBehaviour.WalkToDestination();
+                    MelonLogger.Msg("Packager resumed delivery of carried unpacked product.");
+                    return;
+                }
+
                 if (!(__result is null))
                 {
                     if (!StationModeRegistry.TryGetMode(__result, out var selectedMode) ||
@@ -314,6 +332,13 @@ namespace ImprovedPackagers
 
             try
             {
+                if (UnpackTransitRouting.HasCarriedUnpackProduct(__instance))
+                {
+                    __instance.MoveItemBehaviour.WalkToDestination();
+                    MelonLogger.Msg("Packager resumed delivery of carried unpacked product.");
+                    return false;
+                }
+
                 if (!UnpackTransitRouting.HasValidProductRoute(__instance, station))
                     return false;
 
