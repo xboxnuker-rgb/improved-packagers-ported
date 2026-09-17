@@ -292,6 +292,26 @@ The assembly logs `Compatibility build f13-native-transit-r1 loaded.` at startup
 - Static API verification: passed against the supplied f13 interop assembly.
 - Live-game verification: pending isolated output and input route tests.
 
+### Supplied log audit and candidate 18
+
+The nine supplied runtime logs separated two distinct failures:
+
+- The 06:09 through 07:20 sessions used earlier candidates that reached the custom pickup and repeatedly logged 20-item collections.
+- The 07:28, 08:33, and 08:46 sessions failed the mod's entire Harmony initialization. Harmony reported that prefix parameter `templateItem` did not match f13's `IsDestinationValid(..., ItemInstance item, ...)` parameter name. Those builds could not record UI mode changes or run any other patch.
+- The 08:48 session positively loaded candidate 17 (`f13-native-transit-r1`) without a Harmony exception, but contained no station-mode, route-waiting, or delivery-start message. The assigned worker therefore remained on the Package default before `SetNPCUser` could run.
+
+Candidate 18 resolves that first-run deadlock. When no explicit or sticky mode exists, `PackagingStationBehaviour.IsStationReady` now asks f13 which mode is uniquely ready. It infers and retains Unpackage only when Unpackage is ready and Package is not; it does not persist a guess for an idle or ambiguous station. The same resolver is used when station work executes and when an NPC user is assigned. Runtime logs identify both the inferred mode and the build.
+
+The API verifier now optionally checks parameter names as well as parameter types for Harmony methods that inject original arguments, preventing the earlier `templateItem`/`item` failure from passing static verification again.
+
+- Candidate 18 source: `f36e4f81876c0b53787d35383f206e448f2809f8`
+- Candidate 18 DLL SHA-256: `0A6FD0C2DC70460C7226ED0FE462CCEDD80485EEED6602512DA4C51CA658F611`
+- Candidate 18 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test18.zip`
+- Candidate 18 package SHA-256: `FC971C9FC89A8144234448F1984C9F4BBA2317EBBDF177F8A5B1FE1623668B6D`
+- Release build: zero warnings and zero errors.
+- Static API and Harmony parameter-name verification: passed against the supplied f13 interop assembly.
+- Live-game verification: pending.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
