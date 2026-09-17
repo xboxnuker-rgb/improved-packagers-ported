@@ -16,7 +16,7 @@ namespace ImprovedPackagers
     public class ImprovedPackagers : MelonMod
     {
         public const string ModName = "Improved Packagers";
-        public const string Version = "2.0.0";
+        public const string Version = "2.0.1";
         public const string ModDesc = "Enables Packagers to unpack product at Packaging Stations, and load vehicles parked in Loading Bays";
 
         private MelonPreferences_Category PropertyGroup;

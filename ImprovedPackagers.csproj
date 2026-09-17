@@ -4,10 +4,9 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Authors>Dre</Authors>
-    <PackageId>TimestampTexts</PackageId>
-    <Description>Adds timestamp and day label to text messages in Schedule One</Description>
-    <RepositoryUrl>
-    </RepositoryUrl>
+    <PackageId>ImprovedPackagers</PackageId>
+    <Description>Enables Schedule I Packagers to unpack products and load vehicles parked in Loading Bays</Description>
+    <RepositoryUrl>https://github.com/GuysWeForgotDre/Improved-Packagers</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <PropertyGroup>

@@ -25,12 +25,12 @@ namespace ImprovedPackagers
     /*
      * PackagingStationCanvas Patches
      * */
-    [HarmonyPatch(typeof(PackagingStationCanvas), nameof(PackagingStationCanvas.SetIsOpen))]
-    static class PSCanvasSetIsOpenPatch
+    [HarmonyPatch(typeof(PackagingStationCanvas), nameof(PackagingStationCanvas.Open), new[] { typeof(PackagingStation) })]
+    static class PSCanvasOpenPatch
     {
-        static void Postfix(PackagingStationCanvas __instance, PackagingStation station, bool open)
+        static void Postfix(PackagingStationCanvas __instance, PackagingStation station)
         {
-            if (__instance is null || station is null || !open) return;
+            if (__instance is null || station is null) return;
             StationModeRegistry.SetExplicit(station, __instance.CurrentMode);
         }
     }
@@ -40,8 +40,8 @@ namespace ImprovedPackagers
     {
         static void Postfix(PackagingStationCanvas __instance)
         {
-            if (__instance is null || __instance.PackagingStation is null) return;
-            StationModeRegistry.SetExplicit(__instance.PackagingStation, __instance.CurrentMode);
+            if (__instance is null || __instance.Station is null) return;
+            StationModeRegistry.SetExplicit(__instance.Station, __instance.CurrentMode);
         }
     }
 
@@ -130,7 +130,7 @@ namespace ImprovedPackagers
         }
     }
 
-    [HarmonyPatch(typeof(PackagingStation), nameof(PackagingStation.DestroyItem))]
+    [HarmonyPatch(typeof(PackagingStation), nameof(PackagingStation.Destroy))]
     static class PackagingStationDestroyPatch
     {
         static void Postfix(PackagingStation __instance) => StationModeRegistry.Remove(__instance);

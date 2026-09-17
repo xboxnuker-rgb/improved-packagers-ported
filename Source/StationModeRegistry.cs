@@ -17,7 +17,7 @@ public static class StationModeRegistry
 
     public static void Load()
     {
-        if (File.Exists(FilePath)) return;
+        if (!File.Exists(FilePath)) return;
 
         _explicit.Clear();
         _sticky.Clear();
