@@ -96,6 +96,22 @@ Static API verification and the Release build pass for this candidate. Runtime t
 - Candidate package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test2.zip`
 - Candidate package SHA-256: `B13F852C4570914317E77DE08780D674761C8F8DF1648C58B03C810A88D3F62F`
 
+Alex's isolated test of candidate 2 passed the unpack operation with Harder Working Employees disabled, but the worker did not collect or deliver the loose product despite a selected storage destination. This proves the remaining delivery defect is in Improved Packagers/f13 itself and is not attributable to HWE.
+
+Candidate 3 adds the narrow f13 worker handoff:
+
+- Extend `Packager.GetStationMoveItems()` only when vanilla has no valid result, selecting an unpack-mode station with loose `ProductSlot` inventory and a valid destination route.
+- Suppress vanilla selection of an unpack-mode station when it would carry the still-packaged physical `OutputSlot` item away.
+- Intercept `Packager.StartMoveItem(PackagingStation)` only for unpack mode and call f13's `MoveItemBehaviour.Initialize(TransitRoute, ItemInstance, int, bool)` followed by parameterless `Enable_Networked()`.
+- Keep package mode and every non-packaging transit route on vanilla behavior.
+
+- Candidate 3 source: `93aba607881bba9ac1f19fe6dc782b63f2244023`
+- Candidate 3 DLL SHA-256: `B03407062D3FC9B04FDB93A77F08579E46F77C77838D23534410F002881E895F`
+- Candidate 3 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test3.zip`
+- Candidate 3 package SHA-256: `7B6B552355BC85ECD1039876FCAE4463A84F6697F643B46A9B1CA4E4E06E8622`
+
+Candidate 3 must pass the same isolated scenario before HWE is re-enabled. Only port HWE if isolated delivery passes and the identical HWE-enabled scenario then fails.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
