@@ -2,6 +2,7 @@
 using Il2CppFishNet;
 using Il2CppFishNet.Object;
 using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppScheduleOne.Employees;
 using Il2CppScheduleOne.Management;
 using Il2CppScheduleOne.NPCs.Behaviour;
 using Il2CppScheduleOne.ObjectScripts;
@@ -10,6 +11,7 @@ using Il2CppScheduleOne.UI.Stations;
 #elif Mono
 using FishNet;
 using FishNet.Object;
+using ScheduleOne.Employees;
 using ScheduleOne.Management;
 using ScheduleOne.NPCs.Behaviour;
 using ScheduleOne.ObjectScripts;
@@ -17,11 +19,50 @@ using ScheduleOne.Persistence;
 using ScheduleOne.UI.Stations;
 #endif
 using HarmonyLib;
+using MelonLoader;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace ImprovedPackagers
 {
+    static class UnpackTransitRouting
+    {
+        public static PackagerConfiguration GetConfiguration(Packager packager)
+        {
+#if Il2Cpp
+            return (packager?.Configuration as Il2CppObjectBase)?.TryCast<PackagerConfiguration>();
+#elif Mono
+            return packager?.Configuration as PackagerConfiguration;
+#endif
+        }
+
+        public static PackagingStationConfiguration GetConfiguration(PackagingStation station)
+        {
+#if Il2Cpp
+            return (station?.Configuration as Il2CppObjectBase)?.TryCast<PackagingStationConfiguration>();
+#elif Mono
+            return station?.Configuration as PackagingStationConfiguration;
+#endif
+        }
+
+        public static bool HasValidProductRoute(Packager packager, PackagingStation station)
+        {
+            if (packager?.MoveItemBehaviour is null || station?.ProductSlot?.ItemInstance is null)
+                return false;
+            if (station.ProductSlot.Quantity <= 0)
+                return false;
+
+            var route = GetConfiguration(station)?.DestinationRoute;
+            if (route is null || !route.AreEntitiesNonNull())
+                return false;
+
+            return packager.MoveItemBehaviour.IsTransitRouteValid(
+                route,
+                station.ProductSlot.ItemInstance,
+                out _);
+        }
+    }
+
     /*
      * PackagingStationCanvas Patches
      * */
@@ -114,6 +155,88 @@ namespace ImprovedPackagers
                 return false;
             }
             return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(Packager), "GetStationMoveItems", new System.Type[] { })]
+    static class PackagerGetStationMoveItemsPatch
+    {
+        static void Postfix(Packager __instance, ref PackagingStation __result)
+        {
+            try
+            {
+                if (!(__result is null))
+                {
+                    if (!StationModeRegistry.TryGetMode(__result, out var selectedMode) ||
+                        selectedMode != PackagingStation.EMode.Unpackage)
+                        return;
+
+                    if (UnpackTransitRouting.HasValidProductRoute(__instance, __result))
+                        return;
+
+                    // Never let the vanilla path carry the packaged item away
+                    // from an unpack-mode station's physical OutputSlot.
+                    __result = null;
+                }
+
+                var configuration = UnpackTransitRouting.GetConfiguration(__instance);
+                if (configuration?.AssignedStations is null) return;
+
+                foreach (var station in configuration.AssignedStations)
+                {
+                    if (station is null ||
+                        !StationModeRegistry.TryGetMode(station, out var mode) ||
+                        mode != PackagingStation.EMode.Unpackage)
+                        continue;
+
+                    if (UnpackTransitRouting.HasValidProductRoute(__instance, station))
+                    {
+                        __result = station;
+                        return;
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MelonLogger.Error($"Failed to select unpacked product for delivery: {ex}");
+                __result = null;
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Packager), "StartMoveItem", new[] { typeof(PackagingStation) })]
+    static class PackagerStartMoveItemPatch
+    {
+        static bool Prefix(Packager __instance, PackagingStation station)
+        {
+            if (station is null ||
+                !StationModeRegistry.TryGetMode(station, out var mode) ||
+                mode != PackagingStation.EMode.Unpackage)
+                return true;
+
+            try
+            {
+                if (!UnpackTransitRouting.HasValidProductRoute(__instance, station))
+                    return false;
+
+                var route = UnpackTransitRouting.GetConfiguration(station).DestinationRoute;
+                var product = station.ProductSlot.ItemInstance;
+
+#if Il2Cpp
+                __instance.MoveItemBehaviour.Initialize(route, product, 0, false);
+                __instance.MoveItemBehaviour.Enable_Networked();
+#elif Mono
+                __instance.MoveItemBehaviour.Initialize(route, product);
+                __instance.MoveItemBehaviour.Enable_Networked(null);
+#endif
+                MelonLogger.Msg("Packager started delivery of unpacked product.");
+            }
+            catch (System.Exception ex)
+            {
+                MelonLogger.Error($"Failed to start unpacked product delivery: {ex}");
+            }
+
+            return false;
         }
     }
 

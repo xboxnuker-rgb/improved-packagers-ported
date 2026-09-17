@@ -41,6 +41,10 @@
       <HintPath>$(MelonLoaderRoot)\Il2CppAssemblies\Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="Il2CppScheduleOne.Core">
+      <HintPath>$(MelonLoaderRoot)\Il2CppAssemblies\Il2CppScheduleOne.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Il2Cppmscorlib">
       <HintPath>$(MelonLoaderRoot)\Il2CppAssemblies\Il2Cppmscorlib.dll</HintPath>
       <Private>false</Private>

@@ -101,6 +101,13 @@ try {
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.PackagingStationBehaviour" "IsStationReady" @(
         "Il2CppScheduleOne.ObjectScripts.PackagingStation"
     )
+    Assert-Method "Il2CppScheduleOne.Employees.Packager" "GetStationMoveItems"
+    Assert-Method "Il2CppScheduleOne.Employees.Packager" "StartMoveItem" @(
+        "Il2CppScheduleOne.ObjectScripts.PackagingStation"
+    )
+    Assert-Property "Il2CppScheduleOne.Employees.Packager" "Configuration" "Il2CppScheduleOne.Management.EntityConfiguration"
+    Assert-Property "Il2CppScheduleOne.Employees.Employee" "MoveItemBehaviour" "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour"
+    Assert-Property "Il2CppScheduleOne.Management.PackagerConfiguration" "AssignedStations" 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.ObjectScripts.PackagingStation>'
     Assert-Method "Il2CppScheduleOne.ObjectScripts.PackagingStation" "Awake"
     Assert-Method "Il2CppScheduleOne.ObjectScripts.PackagingStation" "PackSingleInstance"
     Assert-Method "Il2CppScheduleOne.ObjectScripts.PackagingStation" "Unpack"
@@ -110,6 +117,21 @@ try {
     Assert-Property "Il2CppScheduleOne.ObjectScripts.PackagingStation" "ProductSlot" "Il2CppScheduleOne.ItemFramework.ItemSlot"
     Assert-Property "Il2CppScheduleOne.ObjectScripts.PackagingStation" "OutputSlot" "Il2CppScheduleOne.ItemFramework.ItemSlot"
     Assert-Property "Il2CppScheduleOne.ObjectScripts.PackagingStation" "OutputSlots" 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.ItemFramework.ItemSlot>'
+    Assert-Property "Il2CppScheduleOne.ObjectScripts.PackagingStation" "Configuration" "Il2CppScheduleOne.Management.EntityConfiguration"
+    Assert-Property "Il2CppScheduleOne.Management.PackagingStationConfiguration" "DestinationRoute" "Il2CppScheduleOne.Management.TransitRoute"
+    Assert-Method "Il2CppScheduleOne.Management.TransitRoute" "AreEntitiesNonNull"
+    Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "IsTransitRouteValid" @(
+        "Il2CppScheduleOne.Management.TransitRoute",
+        "Il2CppScheduleOne.ItemFramework.ItemInstance",
+        "System.String&"
+    )
+    Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "Initialize" @(
+        "Il2CppScheduleOne.Management.TransitRoute",
+        "Il2CppScheduleOne.ItemFramework.ItemInstance",
+        "System.Int32",
+        "System.Boolean"
+    )
+    Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.Behaviour" "Enable_Networked"
     Assert-Method "Il2CppScheduleOne.ObjectScripts.PackagingStation" "SetNPCUser" @(
         "Il2CppFishNet.Object.NetworkObject"
     )
