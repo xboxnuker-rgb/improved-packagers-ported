@@ -125,6 +125,16 @@ try {
         "Il2CppScheduleOne.ItemFramework.ItemInstance",
         "System.String&"
     )
+    Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "IsTransitRouteValid" @(
+        "Il2CppScheduleOne.Management.TransitRoute",
+        "System.String",
+        "System.String&"
+    )
+    Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "IsTransitRouteValid" @(
+        "Il2CppScheduleOne.Management.TransitRoute",
+        "System.String"
+    )
+    Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "TakeItem"
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "Initialize" @(
         "Il2CppScheduleOne.Management.TransitRoute",
         "Il2CppScheduleOne.ItemFramework.ItemInstance",
@@ -132,6 +142,27 @@ try {
         "System.Boolean"
     )
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.Behaviour" "Enable_Networked"
+    Assert-Method "Il2CppScheduleOne.Management.ITransitEntity" "GetInputCapacityForItem" @(
+        "Il2CppScheduleOne.ItemFramework.ItemInstance",
+        "Il2CppScheduleOne.NPCs.NPC",
+        "System.Boolean"
+    )
+    Assert-Method "Il2CppScheduleOne.Management.ITransitEntity" "ReserveInputSlotsForItem" @(
+        "Il2CppScheduleOne.ItemFramework.ItemInstance",
+        "Il2CppFishNet.Object.NetworkObject"
+    )
+    Assert-Method "Il2CppScheduleOne.NPCs.NPCInventory" "GetCapacityForItem" @(
+        "Il2CppScheduleOne.ItemFramework.ItemInstance"
+    )
+    Assert-Method "Il2CppScheduleOne.NPCs.NPCInventory" "InsertItem" @(
+        "Il2CppScheduleOne.ItemFramework.ItemInstance",
+        "System.Boolean"
+    )
+    Assert-Method "Il2CppScheduleOne.ItemFramework.ItemInstance" "GetCopy" @("System.Int32")
+    Assert-Method "Il2CppScheduleOne.ItemFramework.ItemSlot" "ChangeQuantity" @(
+        "System.Int32",
+        "System.Boolean"
+    )
     Assert-Method "Il2CppScheduleOne.ObjectScripts.PackagingStation" "SetNPCUser" @(
         "Il2CppFishNet.Object.NetworkObject"
     )
