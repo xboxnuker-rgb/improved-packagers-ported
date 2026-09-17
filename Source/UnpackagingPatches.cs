@@ -155,6 +155,61 @@ namespace ImprovedPackagers
                 mode == PackagingStation.EMode.Unpackage;
         }
 
+        public static bool TryGetUnpackDestination(TransitRoute route, out PackagingStation station)
+        {
+#if Il2Cpp
+            station = (route?.Destination as Il2CppObjectBase)?.TryCast<PackagingStation>();
+#elif Mono
+            station = route?.Destination as PackagingStation;
+#endif
+            return !(station is null) &&
+                StationModeRegistry.TryGetMode(station, out var mode) &&
+                mode == PackagingStation.EMode.Unpackage;
+        }
+
+        public static bool ValidateUnpackInputRoute(
+            MoveItemBehaviour behaviour,
+            TransitRoute route,
+            ItemInstance templateItem,
+            string expectedItemId,
+            out string invalidReason)
+        {
+            invalidReason = string.Empty;
+            if (!TryGetUnpackDestination(route, out var station))
+            {
+                invalidReason = "Route destination is not an unpack-mode Packaging Station.";
+                return false;
+            }
+
+            var slot = station.PackagingSlot;
+            if (slot is null)
+            {
+                invalidReason = "Unpack-mode PackagingSlot is unavailable.";
+                return false;
+            }
+
+            if (slot.ItemInstance != null && slot.Quantity > 0 &&
+                !string.IsNullOrEmpty(expectedItemId) && slot.ItemInstance.ID != expectedItemId)
+            {
+                invalidReason = "PackagingSlot contains a different packaged item.";
+                return false;
+            }
+
+            if (!station.IsAcceptingItems)
+            {
+                invalidReason = "Unpack-mode PackagingSlot is not accepting packaged input.";
+                return false;
+            }
+
+            if (templateItem != null && slot.GetCapacityForItem(templateItem, true) <= 0)
+            {
+                invalidReason = "Unpack-mode PackagingSlot has no capacity for the packaged item.";
+                return false;
+            }
+
+            return true;
+        }
+
         public static bool ValidateProductRoute(
             MoveItemBehaviour behaviour,
             TransitRoute route,
@@ -302,6 +357,30 @@ namespace ImprovedPackagers
         }
     }
 
+    [HarmonyPatch(typeof(PackagingStation), nameof(PackagingStation.InputSlots), MethodType.Getter)]
+    static class PackagingStationInputSlotsPatch
+    {
+        static void Postfix(
+            PackagingStation __instance,
+#if Il2Cpp
+            ref Il2CppSystem.Collections.Generic.List<ItemSlot> __result)
+#elif Mono
+            ref List<ItemSlot> __result)
+#endif
+        {
+            if (__instance is null || __result is null ||
+                !StationModeRegistry.TryGetMode(__instance, out var mode) ||
+                mode != PackagingStation.EMode.Unpackage)
+                return;
+
+            var packagingSlot = __instance.PackagingSlot;
+            if (packagingSlot is null) return;
+            foreach (var slot in __result)
+                if (slot == packagingSlot) return;
+            __result.Add(packagingSlot);
+        }
+    }
+
     [HarmonyPatch(typeof(PackagingStation), nameof(PackagingStation.PackSingleInstance))]
     static class PackagingStationPackSingleInstancePatch
     {
@@ -441,6 +520,13 @@ namespace ImprovedPackagers
             ref string invalidReason,
             ref bool __result)
         {
+            if (UnpackTransitRouting.TryGetUnpackDestination(route, out _))
+            {
+                __result = UnpackTransitRouting.ValidateUnpackInputRoute(
+                    __instance, route, null, itemID, out invalidReason);
+                return false;
+            }
+
             if (!UnpackTransitRouting.TryGetUnpackSource(route, out _))
                 return true;
 
@@ -468,6 +554,13 @@ namespace ImprovedPackagers
             ref string invalidReason,
             ref bool __result)
         {
+            if (UnpackTransitRouting.TryGetUnpackDestination(route, out _))
+            {
+                __result = UnpackTransitRouting.ValidateUnpackInputRoute(
+                    __instance, route, templateItem, templateItem?.ID, out invalidReason);
+                return false;
+            }
+
             if (!UnpackTransitRouting.TryGetUnpackSource(route, out _))
                 return true;
 
@@ -491,6 +584,13 @@ namespace ImprovedPackagers
             string itemID,
             ref bool __result)
         {
+            if (UnpackTransitRouting.TryGetUnpackDestination(route, out _))
+            {
+                __result = UnpackTransitRouting.ValidateUnpackInputRoute(
+                    __instance, route, null, itemID, out _);
+                return false;
+            }
+
             if (!UnpackTransitRouting.TryGetUnpackSource(route, out _))
                 return true;
 
@@ -518,6 +618,13 @@ namespace ImprovedPackagers
             ref string invalidReason,
             ref bool __result)
         {
+            if (UnpackTransitRouting.TryGetUnpackDestination(route, out _))
+            {
+                __result = UnpackTransitRouting.ValidateUnpackInputRoute(
+                    __instance, route, templateItem, templateItem?.ID, out invalidReason);
+                return false;
+            }
+
             if (!UnpackTransitRouting.TryGetUnpackSource(route, out _))
                 return true;
 
@@ -541,6 +648,13 @@ namespace ImprovedPackagers
             ItemInstance templateItem,
             ref bool __result)
         {
+            if (UnpackTransitRouting.TryGetUnpackDestination(route, out _))
+            {
+                __result = UnpackTransitRouting.ValidateUnpackInputRoute(
+                    __instance, route, templateItem, templateItem?.ID, out _);
+                return false;
+            }
+
             if (!UnpackTransitRouting.TryGetUnpackSource(route, out _))
                 return true;
 
