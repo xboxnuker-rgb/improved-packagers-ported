@@ -367,3 +367,9 @@ _ScheduleOneAssemblies/
 .tools/
 artifacts/
 *.zip
+GameAssembly.dll
+global-metadata.dat
+MelonLoader/
+Cpp2IL/
+ILRecovery/
+ISIL/
