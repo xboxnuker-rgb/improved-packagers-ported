@@ -10,6 +10,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Adhere
 - Kept an unpack delivery route valid after pickup so a Packager can fill multiple inventory stacks and then walk them to the destination.
 - Completed the unpack pickup state by batching available stacks and explicitly sending the Packager to the selected destination.
 - Prevented a Packager carrying unpacked product from reselecting its source station and resetting the delivery route.
+- Rebuilt the selected destination route when the game clears the active route before a carried unpacked load is delivered.
 ## [2.0.0] - 2025-08-11
 ### Added
 `Unpackage` - Packagers follow the pack/unpack controller of their assigned Packaging Stations

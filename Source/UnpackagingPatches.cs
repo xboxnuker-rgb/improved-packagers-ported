@@ -93,6 +93,47 @@ namespace ImprovedPackagers
                 behaviour.Npc?.Inventory?.GetIdenticalItemAmount(template) > 0;
         }
 
+        public static bool HasCarriedProductForStation(Packager packager, PackagingStation station)
+        {
+            var behaviour = packager?.MoveItemBehaviour;
+            var template = behaviour?.itemToRetrieveTemplate;
+            if (station is null || behaviour is null || template is null ||
+                !StationModeRegistry.TryGetMode(station, out var mode) ||
+                mode != PackagingStation.EMode.Unpackage)
+                return false;
+
+            var sourceProduct = station.ProductSlot?.ItemInstance;
+            return (sourceProduct is null || sourceProduct.ID == template.ID) &&
+                behaviour.Npc?.Inventory?.GetIdenticalItemAmount(template) > 0 &&
+                !(GetConfiguration(station)?.DestinationRoute is null);
+        }
+
+        public static bool ResumeCarriedDelivery(Packager packager, PackagingStation station)
+        {
+            if (!HasCarriedProductForStation(packager, station)) return false;
+
+            var behaviour = packager.MoveItemBehaviour;
+            var route = GetConfiguration(station).DestinationRoute;
+            int carriedAmount = behaviour.Npc.Inventory.GetIdenticalItemAmount(behaviour.itemToRetrieveTemplate);
+
+            bool sameRoute = TryGetUnpackSource(behaviour.assignedRoute, out var assignedStation) &&
+                assignedStation.GUID == station.GUID;
+            if (!sameRoute)
+            {
+#if Il2Cpp
+                behaviour.Initialize(route, behaviour.itemToRetrieveTemplate, 0, false);
+                behaviour.Enable_Networked();
+#elif Mono
+                behaviour.Initialize(route, behaviour.itemToRetrieveTemplate);
+                behaviour.Enable_Networked(null);
+#endif
+            }
+
+            behaviour.grabbedAmount = carriedAmount;
+            behaviour.WalkToDestination();
+            return true;
+        }
+
         public static void LogRouteFailureOnce(PackagingStation station, string reason)
         {
             if (station is null || string.IsNullOrEmpty(reason)) return;
@@ -270,11 +311,10 @@ namespace ImprovedPackagers
         {
             try
             {
-                if (UnpackTransitRouting.HasCarriedUnpackProduct(__instance))
+                if (!(__result is null) &&
+                    UnpackTransitRouting.ResumeCarriedDelivery(__instance, __result))
                 {
                     __result = null;
-                    __instance.MoveItemBehaviour.WalkToDestination();
-                    MelonLogger.Msg("Packager resumed delivery of carried unpacked product.");
                     return;
                 }
 
@@ -301,6 +341,12 @@ namespace ImprovedPackagers
                         !StationModeRegistry.TryGetMode(station, out var mode) ||
                         mode != PackagingStation.EMode.Unpackage)
                         continue;
+
+                    if (UnpackTransitRouting.ResumeCarriedDelivery(__instance, station))
+                    {
+                        __result = null;
+                        return;
+                    }
 
                     if (UnpackTransitRouting.HasValidProductRoute(__instance, station, out var reason))
                     {
@@ -332,9 +378,8 @@ namespace ImprovedPackagers
 
             try
             {
-                if (UnpackTransitRouting.HasCarriedUnpackProduct(__instance))
+                if (UnpackTransitRouting.ResumeCarriedDelivery(__instance, station))
                 {
-                    __instance.MoveItemBehaviour.WalkToDestination();
                     MelonLogger.Msg("Packager resumed delivery of carried unpacked product.");
                     return false;
                 }
