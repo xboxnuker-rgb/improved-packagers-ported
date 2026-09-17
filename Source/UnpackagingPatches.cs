@@ -486,6 +486,56 @@ namespace ImprovedPackagers
         }
     }
 
+    [HarmonyPatch]
+    static class MoveItemBehaviourIsDestinationValidPatch
+    {
+        static System.Reflection.MethodBase TargetMethod() => AccessTools.Method(
+            typeof(MoveItemBehaviour),
+            nameof(MoveItemBehaviour.IsDestinationValid),
+            new[] { typeof(TransitRoute), typeof(ItemInstance), typeof(string).MakeByRefType() });
+
+        static bool Prefix(
+            MoveItemBehaviour __instance,
+            TransitRoute route,
+            ItemInstance templateItem,
+            ref string invalidReason,
+            ref bool __result)
+        {
+            if (!UnpackTransitRouting.TryGetUnpackSource(route, out _))
+                return true;
+
+            __result = UnpackTransitRouting.ValidateProductRoute(
+                __instance,
+                route,
+                templateItem?.ID,
+                out invalidReason);
+            return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(MoveItemBehaviour), nameof(MoveItemBehaviour.IsDestinationValid), new[] {
+        typeof(TransitRoute), typeof(ItemInstance)
+    })]
+    static class MoveItemBehaviourIsDestinationValidSimplePatch
+    {
+        static bool Prefix(
+            MoveItemBehaviour __instance,
+            TransitRoute route,
+            ItemInstance templateItem,
+            ref bool __result)
+        {
+            if (!UnpackTransitRouting.TryGetUnpackSource(route, out _))
+                return true;
+
+            __result = UnpackTransitRouting.ValidateProductRoute(
+                __instance,
+                route,
+                templateItem?.ID,
+                out _);
+            return false;
+        }
+    }
+
     [HarmonyPatch(typeof(MoveItemBehaviour), "TakeItem", new System.Type[] { })]
     static class MoveItemBehaviourTakeItemPatch
     {

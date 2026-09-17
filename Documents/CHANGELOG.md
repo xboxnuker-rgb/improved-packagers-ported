@@ -13,6 +13,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Adhere
 - Rebuilt the selected destination route when the game clears the active route before a carried unpacked load is delivered.
 - Matched the base worker behavior by carrying one inventory-sized unpacked stack per trip before returning for the next stack.
 - Added an unpack-specific placement path so a carried loose-product stack is inserted into the selected storage input instead of relying on the packaged-output placement path.
+- Covered f13's final `IsDestinationValid` gate so unpacked ProductSlot loads can reach placement.
 ## [2.0.0] - 2025-08-11
 ### Added
 `Unpackage` - Packagers follow the pack/unpack controller of their assigned Packaging Stations

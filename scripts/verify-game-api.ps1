@@ -137,6 +137,15 @@ try {
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "TakeItem"
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "OnActiveTick"
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "PlaceItem"
+    Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "IsDestinationValid" @(
+        "Il2CppScheduleOne.Management.TransitRoute",
+        "Il2CppScheduleOne.ItemFramework.ItemInstance",
+        "System.String&"
+    )
+    Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "IsDestinationValid" @(
+        "Il2CppScheduleOne.Management.TransitRoute",
+        "Il2CppScheduleOne.ItemFramework.ItemInstance"
+    )
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "WalkToDestination"
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "Initialize" @(
         "Il2CppScheduleOne.Management.TransitRoute",
