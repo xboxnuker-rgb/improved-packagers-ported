@@ -174,6 +174,16 @@ Candidate 7 guards both `GetStationMoveItems()` and `StartMoveItem()` against th
 - Candidate 7 package SHA-256: `30ABA82F85A22E7E932F53F25F1E6D9A6B1985A4803ED13502ED41C63ACA0C34`
 - Candidate 7 Release build: zero warnings and zero errors; all required f13 signatures passed.
 
+Candidate 7 runtime result (reported after test): behavior remained effectively unchanged. The worker still collected five stacks, walked partway toward storage, then returned to the source and looped. This means f13 clears `MoveItemBehaviour.assignedRoute` before the next station-selection callback, so the route-based carried-load guard cannot fire.
+
+Candidate 8 removes that dependency. It matches the carried template to an unpack-mode assigned station, rebuilds that station's configured destination route when the active route is gone, restores `grabbedAmount` from the worker inventory, and resumes `WalkToDestination()`.
+
+- Candidate 8 source: `b939068302c0bf4bb07a8793e2e948bdae673fda`
+- Candidate 8 DLL SHA-256: `434A5983E06F3BDC0708560173094129E337614E43B19FD54EA2067F758D1016`
+- Candidate 8 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test8.zip`
+- Candidate 8 package SHA-256: `0BC669C8AC73C2059444FAA7A7DDFDE6F5831A1944BC35BD40BADBC6CE6606AE`
+- Candidate 8 Release build: zero warnings and zero errors; all required f13 signatures passed.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
