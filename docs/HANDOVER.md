@@ -237,6 +237,16 @@ Alex additionally reported that the worker does not recognize an unpack-mode Pac
 - Candidate 14 package SHA-256: `A9539AF7A16A5807E70EDFCB0BFF30FFAF5FE646A9470DF290BE21DB84964FDF`
 - Candidate 14 Release build: zero warnings and zero errors; all required f13 signatures passed.
 
+Candidate 14 runtime result (reported after test): behavior remained identical on both input and output sides. The `IsAcceptingItems` override alone did not expose the station through the actual transit input route.
+
+Candidate 15 adds the station's `PackagingSlot` to unpack-mode `InputSlots` and handles f13 transit/destination validation when the route destination is an unpack-mode station. This is the input-side equivalent of the ProductSlot output bridge.
+
+- Candidate 15 source: `58b5cd26c274d951ea7106616eb6d53e1092b466`
+- Candidate 15 DLL SHA-256: `3104D1AFAC40350B2A11740B2F33D47DA9D5285524AC6C18B3D6C4327B666571`
+- Candidate 15 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test15.zip`
+- Candidate 15 package SHA-256: `F243D8DE4EFBA06A4F751D13188690323BC810F257162DDF4EDD174792FD3B5D`
+- Candidate 15 Release build: zero warnings and zero errors; all required f13 signatures passed.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
