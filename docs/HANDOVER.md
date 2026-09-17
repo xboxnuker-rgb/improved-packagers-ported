@@ -144,6 +144,21 @@ Candidate 5 preserves the in-progress route when either the station still contai
 - Candidate 5 package SHA-256: `ED9BB327265527DFD89CA6161B0AF7765743B8305C26A4D715A24BD37AEC30DD`
 - Candidate 5 Release build: zero warnings and zero errors; all required f13 signatures passed.
 
+Candidate 5 log received on 2026-09-17:
+
+- Log SHA-256: `340B540EDEE13A2F44FB5187261C1A9909BBD4CD4207F843417BD96555E67648`
+- MelonLoader loaded the exact candidate 5 DLL SHA-256 `0566F56A67EF02A1F0928272A30D9E6DA964CAF9B82ABCBED2FE6A84D05FA208` on Schedule I `0.4.6f13`.
+- The worker again collected five 20-item stacks, with no route-invalid or capacity message afterward.
+- The worker remained at the station and repeatedly performed the source action instead of leaving for the destination. The custom `TakeItem()` prefix had correctly replaced the item source but also bypassed vanilla's transition to `WalkToDestination()`.
+
+Candidate 6 batches every currently acceptable stack during one pickup, accumulates the complete `grabbedAmount`, and explicitly calls f13's public `MoveItemBehaviour.WalkToDestination()` after collection. It also resumes the destination leg if the source empties while matching product is already carried.
+
+- Candidate 6 source: `7d3740b19aad3525e7fdd4d805035a956379d500`
+- Candidate 6 DLL SHA-256: `B075A4D7D060336EB77F7C05ACF9695DB8616BB19F5F7AE5A3AD3D7A22F2B9F9`
+- Candidate 6 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test6.zip`
+- Candidate 6 package SHA-256: `688607B492D27028E8CB55FCBC5B358F19E1BD67DD96BB0BC7470E30E7B1FD0E`
+- Candidate 6 Release build: zero warnings and zero errors; exact `WalkToDestination()` API verification passed.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
