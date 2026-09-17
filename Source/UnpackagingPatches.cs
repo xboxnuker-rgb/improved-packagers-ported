@@ -572,6 +572,24 @@ namespace ImprovedPackagers
         }
     }
 
+    [HarmonyPatch(typeof(MoveItemBehaviour), nameof(MoveItemBehaviour.OnActiveTick))]
+    static class MoveItemBehaviourOnActiveTickPatch
+    {
+        static bool Prefix(MoveItemBehaviour __instance)
+        {
+            var template = __instance?.itemToRetrieveTemplate;
+            if (__instance is null ||
+                !UnpackTransitRouting.TryGetUnpackSource(__instance.assignedRoute, out _) ||
+                template is null ||
+                __instance.Npc?.Inventory?.GetIdenticalItemAmount(template) <= 0 ||
+                __instance.currentState != MoveItemBehaviour.EState.Grabbing)
+                return true;
+
+            __instance.WalkToDestination();
+            return false;
+        }
+    }
+
     [HarmonyPatch(typeof(PackagingStation), nameof(PackagingStation.SetNPCUser))]
     static class PackagingStationSetNPCUserPatch
     {

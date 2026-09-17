@@ -135,6 +135,7 @@ try {
         "System.String"
     )
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "TakeItem"
+    Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "OnActiveTick"
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "WalkToDestination"
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour" "Initialize" @(
         "Il2CppScheduleOne.Management.TransitRoute",
