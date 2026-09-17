@@ -575,6 +575,59 @@ namespace ImprovedPackagers
         }
     }
 
+    [HarmonyPatch(typeof(MoveItemBehaviour), nameof(MoveItemBehaviour.PlaceItem))]
+    static class MoveItemBehaviourPlaceItemPatch
+    {
+        static bool Prefix(MoveItemBehaviour __instance)
+        {
+            if (!UnpackTransitRouting.TryGetUnpackSource(__instance?.assignedRoute, out _))
+                return true;
+
+            try
+            {
+                var destination = __instance.assignedRoute?.Destination;
+                var template = __instance.itemToRetrieveTemplate;
+                var inventory = __instance.Npc?.Inventory;
+                if (destination is null || template is null || inventory is null)
+                    return false;
+
+                int amount = System.Math.Min(
+                    __instance.grabbedAmount,
+                    inventory.GetIdenticalItemAmount(template));
+                if (amount <= 0) return false;
+
+                int destinationCapacity = destination.GetInputCapacityForItem(template, __instance.Npc, false);
+                if (destinationCapacity > 0)
+                    amount = System.Math.Min(amount, destinationCapacity);
+                if (amount <= 0) return false;
+
+                int remaining = amount;
+                foreach (var slot in inventory.ItemSlots)
+                {
+                    var item = slot?.ItemInstance;
+                    if (item is null || item.ID != template.ID || slot.Quantity <= 0)
+                        continue;
+
+                    int take = System.Math.Min(slot.Quantity, remaining);
+                    destination.InsertItemIntoInput(item.GetCopy(take), __instance.Npc);
+                    slot.ChangeQuantity(-take, false);
+                    remaining -= take;
+                    if (remaining <= 0) break;
+                }
+
+                destination.RemoveSlotLocks(__instance.Npc.NetworkObject);
+                __instance.grabbedAmount = 0;
+                MelonLogger.Msg($"Packager deposited {amount - remaining} unpacked item(s).");
+            }
+            catch (System.Exception ex)
+            {
+                MelonLogger.Error($"Failed to deposit unpacked product: {ex}");
+            }
+
+            return false;
+        }
+    }
+
     [HarmonyPatch(typeof(PackagingStation), nameof(PackagingStation.SetNPCUser))]
     static class PackagingStationSetNPCUserPatch
     {
