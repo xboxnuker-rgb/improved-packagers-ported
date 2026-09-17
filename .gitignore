@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Local Schedule I references, portable toolchains, logs, and distributables
+_ScheduleOneAssemblies/
+.tools/
+artifacts/
+*.zip
