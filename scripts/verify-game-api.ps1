@@ -114,6 +114,8 @@ try {
     Assert-Method "Il2CppScheduleOne.ObjectScripts.PackagingStation" "GetState" @(
         "Il2CppScheduleOne.ObjectScripts.PackagingStation/EMode"
     )
+    Assert-Property "Il2CppScheduleOne.ObjectScripts.PackagingStation" "IsAcceptingItems" "System.Boolean"
+    Assert-Property "Il2CppScheduleOne.ObjectScripts.PackagingStation" "PackagingSlot" "Il2CppScheduleOne.ItemFramework.ItemSlot"
     Assert-Property "Il2CppScheduleOne.ObjectScripts.PackagingStation" "ProductSlot" "Il2CppScheduleOne.ItemFramework.ItemSlot"
     Assert-Property "Il2CppScheduleOne.ObjectScripts.PackagingStation" "OutputSlot" "Il2CppScheduleOne.ItemFramework.ItemSlot"
     Assert-Property "Il2CppScheduleOne.ObjectScripts.PackagingStation" "OutputSlots" 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.ItemFramework.ItemSlot>'

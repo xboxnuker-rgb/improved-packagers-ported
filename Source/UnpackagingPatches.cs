@@ -285,6 +285,23 @@ namespace ImprovedPackagers
         static void Postfix(PackagingStation __instance) => StationModeRegistry.SetExplicitIfExists(__instance);
     }
 
+    [HarmonyPatch(typeof(PackagingStation), nameof(PackagingStation.IsAcceptingItems), MethodType.Getter)]
+    static class PackagingStationIsAcceptingItemsPatch
+    {
+        static void Postfix(PackagingStation __instance, ref bool __result)
+        {
+            if (__instance is null ||
+                !StationModeRegistry.TryGetMode(__instance, out var mode) ||
+                mode != PackagingStation.EMode.Unpackage)
+                return;
+
+            var packagingSlot = __instance.PackagingSlot;
+            if (!(packagingSlot is null) &&
+                (packagingSlot.ItemInstance is null || packagingSlot.Quantity <= 0))
+                __result = true;
+        }
+    }
+
     [HarmonyPatch(typeof(PackagingStation), nameof(PackagingStation.PackSingleInstance))]
     static class PackagingStationPackSingleInstancePatch
     {
