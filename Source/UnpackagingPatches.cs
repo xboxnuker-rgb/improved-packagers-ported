@@ -90,127 +90,6 @@ namespace ImprovedPackagers
             if (LoggedRouteFailures.Add(key))
                 MelonLogger.Warning($"Unpack delivery waiting: {reason}");
         }
-
-        public static bool TryGetUnpackSource(TransitRoute route, out PackagingStation station)
-        {
-#if Il2Cpp
-            station = (route?.Source as Il2CppObjectBase)?.TryCast<PackagingStation>();
-#elif Mono
-            station = route?.Source as PackagingStation;
-#endif
-            return !(station is null) &&
-                StationModeRegistry.TryGetMode(station, out var mode) &&
-                mode == PackagingStation.EMode.Unpackage;
-        }
-
-        public static bool TryGetUnpackDestination(TransitRoute route, out PackagingStation station)
-        {
-#if Il2Cpp
-            station = (route?.Destination as Il2CppObjectBase)?.TryCast<PackagingStation>();
-#elif Mono
-            station = route?.Destination as PackagingStation;
-#endif
-            return !(station is null) &&
-                StationModeRegistry.TryGetMode(station, out var mode) &&
-                mode == PackagingStation.EMode.Unpackage;
-        }
-
-        public static bool ValidateUnpackInputRoute(
-            MoveItemBehaviour behaviour,
-            TransitRoute route,
-            ItemInstance templateItem,
-            string expectedItemId,
-            out string invalidReason)
-        {
-            invalidReason = string.Empty;
-            if (!TryGetUnpackDestination(route, out var station))
-            {
-                invalidReason = "Route destination is not an unpack-mode Packaging Station.";
-                return false;
-            }
-
-            var slot = station.PackagingSlot;
-            if (slot is null)
-            {
-                invalidReason = "Unpack-mode PackagingSlot is unavailable.";
-                return false;
-            }
-
-            if (slot.ItemInstance != null && slot.Quantity > 0 &&
-                !string.IsNullOrEmpty(expectedItemId) && slot.ItemInstance.ID != expectedItemId)
-            {
-                invalidReason = "PackagingSlot contains a different packaged item.";
-                return false;
-            }
-
-            if (!station.IsAcceptingItems)
-            {
-                invalidReason = "Unpack-mode PackagingSlot is not accepting packaged input.";
-                return false;
-            }
-
-            if (templateItem != null && slot.GetCapacityForItem(templateItem, true) <= 0)
-            {
-                invalidReason = "Unpack-mode PackagingSlot has no capacity for the packaged item.";
-                return false;
-            }
-
-            return true;
-        }
-
-        public static bool ValidateProductRoute(
-            MoveItemBehaviour behaviour,
-            TransitRoute route,
-            string expectedItemId,
-            out string invalidReason)
-        {
-            invalidReason = string.Empty;
-
-            if (!TryGetUnpackSource(route, out var station))
-            {
-                invalidReason = "Route source is not an unpack-mode Packaging Station.";
-                return false;
-            }
-
-            var sourceProduct = station.ProductSlot?.ItemInstance;
-            var product = sourceProduct ?? behaviour.itemToRetrieveTemplate;
-            if (product is null)
-            {
-                invalidReason = "No unpacked or carried product is available.";
-                return false;
-            }
-
-            int sourceQuantity = sourceProduct is null ? 0 : station.ProductSlot.Quantity;
-            int carriedQuantity = behaviour.Npc?.Inventory?.GetIdenticalItemAmount(product) ?? 0;
-            if (sourceQuantity <= 0 && carriedQuantity <= 0)
-            {
-                invalidReason = "Unpacked ProductSlot is empty and the Packager carries no matching product.";
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(expectedItemId) && product.ID != expectedItemId)
-            {
-                invalidReason = "Unpacked ProductSlot contains a different item.";
-                return false;
-            }
-
-            if (route.Destination is null ||
-                route.Destination.GetInputCapacityForItem(product, behaviour.Npc, true) <= 0)
-            {
-                invalidReason = "Destination has no capacity for the unpacked product.";
-                return false;
-            }
-
-            if (carriedQuantity <= 0 &&
-                (behaviour.Npc?.Inventory is null ||
-                 behaviour.Npc.Inventory.GetCapacityForItem(product) <= 0))
-            {
-                invalidReason = "Packager inventory has no capacity for the unpacked product.";
-                return false;
-            }
-
-            return true;
-        }
     }
 
     /*
@@ -298,9 +177,10 @@ namespace ImprovedPackagers
                 mode != PackagingStation.EMode.Unpackage)
                 return;
 
-            var packagingSlot = __instance.PackagingSlot;
-            if (!(packagingSlot is null) &&
-                (packagingSlot.ItemInstance is null || packagingSlot.Quantity <= 0))
+            // Item-specific capacity and compatibility are enforced through the
+            // unpack-mode InputSlots route. This coarse property must stay true
+            // for partially filled PackagingSlots as well as empty ones.
+            if (!(__instance.PackagingSlot is null))
                 __result = true;
         }
     }
@@ -362,6 +242,7 @@ namespace ImprovedPackagers
                         selectedMode != PackagingStation.EMode.Unpackage)
                         return;
 
+                    StationModeRegistry.ApplyTransitOutput(__result, selectedMode);
                     if (UnpackTransitRouting.HasValidProductRoute(__instance, __result))
                         return;
 
@@ -380,6 +261,7 @@ namespace ImprovedPackagers
                         mode != PackagingStation.EMode.Unpackage)
                         continue;
 
+                    StationModeRegistry.ApplyTransitOutput(station, mode);
                     if (UnpackTransitRouting.HasValidProductRoute(__instance, station, out var reason))
                     {
                         __result = station;
@@ -410,6 +292,7 @@ namespace ImprovedPackagers
 
             try
             {
+                StationModeRegistry.ApplyTransitOutput(station, mode);
                 if (!UnpackTransitRouting.HasValidProductRoute(__instance, station))
                     return false;
 
@@ -428,217 +311,6 @@ namespace ImprovedPackagers
             catch (System.Exception ex)
             {
                 MelonLogger.Error($"Failed to start unpacked product delivery: {ex}");
-            }
-
-            return false;
-        }
-    }
-
-    [HarmonyPatch]
-    static class MoveItemBehaviourIsTransitRouteValidStringReasonPatch
-    {
-        static System.Reflection.MethodBase TargetMethod() => AccessTools.Method(
-            typeof(MoveItemBehaviour),
-            nameof(MoveItemBehaviour.IsTransitRouteValid),
-            new[] { typeof(TransitRoute), typeof(string), typeof(string).MakeByRefType() });
-
-        static bool Prefix(
-            MoveItemBehaviour __instance,
-            TransitRoute route,
-            string itemID,
-            ref string invalidReason,
-            ref bool __result)
-        {
-            if (UnpackTransitRouting.TryGetUnpackDestination(route, out _))
-            {
-                __result = UnpackTransitRouting.ValidateUnpackInputRoute(
-                    __instance, route, null, itemID, out invalidReason);
-                return false;
-            }
-
-            if (!UnpackTransitRouting.TryGetUnpackSource(route, out _))
-                return true;
-
-            __result = UnpackTransitRouting.ValidateProductRoute(
-                __instance,
-                route,
-                itemID,
-                out invalidReason);
-            return false;
-        }
-    }
-
-    [HarmonyPatch]
-    static class MoveItemBehaviourIsTransitRouteValidInstancePatch
-    {
-        static System.Reflection.MethodBase TargetMethod() => AccessTools.Method(
-            typeof(MoveItemBehaviour),
-            nameof(MoveItemBehaviour.IsTransitRouteValid),
-            new[] { typeof(TransitRoute), typeof(ItemInstance), typeof(string).MakeByRefType() });
-
-        static bool Prefix(
-            MoveItemBehaviour __instance,
-            TransitRoute route,
-            ItemInstance templateItem,
-            ref string invalidReason,
-            ref bool __result)
-        {
-            if (UnpackTransitRouting.TryGetUnpackDestination(route, out _))
-            {
-                __result = UnpackTransitRouting.ValidateUnpackInputRoute(
-                    __instance, route, templateItem, templateItem?.ID, out invalidReason);
-                return false;
-            }
-
-            if (!UnpackTransitRouting.TryGetUnpackSource(route, out _))
-                return true;
-
-            __result = UnpackTransitRouting.ValidateProductRoute(
-                __instance,
-                route,
-                templateItem?.ID,
-                out invalidReason);
-            return false;
-        }
-    }
-
-    [HarmonyPatch(typeof(MoveItemBehaviour), nameof(MoveItemBehaviour.IsTransitRouteValid), new[] {
-        typeof(TransitRoute), typeof(string)
-    })]
-    static class MoveItemBehaviourIsTransitRouteValidStringPatch
-    {
-        static bool Prefix(
-            MoveItemBehaviour __instance,
-            TransitRoute route,
-            string itemID,
-            ref bool __result)
-        {
-            if (UnpackTransitRouting.TryGetUnpackDestination(route, out _))
-            {
-                __result = UnpackTransitRouting.ValidateUnpackInputRoute(
-                    __instance, route, null, itemID, out _);
-                return false;
-            }
-
-            if (!UnpackTransitRouting.TryGetUnpackSource(route, out _))
-                return true;
-
-            __result = UnpackTransitRouting.ValidateProductRoute(
-                __instance,
-                route,
-                itemID,
-                out _);
-            return false;
-        }
-    }
-
-    [HarmonyPatch]
-    static class MoveItemBehaviourIsDestinationValidPatch
-    {
-        static System.Reflection.MethodBase TargetMethod() => AccessTools.Method(
-            typeof(MoveItemBehaviour),
-            nameof(MoveItemBehaviour.IsDestinationValid),
-            new[] { typeof(TransitRoute), typeof(ItemInstance), typeof(string).MakeByRefType() });
-
-        static bool Prefix(
-            MoveItemBehaviour __instance,
-            TransitRoute route,
-            ItemInstance templateItem,
-            ref string invalidReason,
-            ref bool __result)
-        {
-            if (UnpackTransitRouting.TryGetUnpackDestination(route, out _))
-            {
-                __result = UnpackTransitRouting.ValidateUnpackInputRoute(
-                    __instance, route, templateItem, templateItem?.ID, out invalidReason);
-                return false;
-            }
-
-            if (!UnpackTransitRouting.TryGetUnpackSource(route, out _))
-                return true;
-
-            __result = UnpackTransitRouting.ValidateProductRoute(
-                __instance,
-                route,
-                templateItem?.ID,
-                out invalidReason);
-            return false;
-        }
-    }
-
-    [HarmonyPatch(typeof(MoveItemBehaviour), nameof(MoveItemBehaviour.IsDestinationValid), new[] {
-        typeof(TransitRoute), typeof(ItemInstance)
-    })]
-    static class MoveItemBehaviourIsDestinationValidSimplePatch
-    {
-        static bool Prefix(
-            MoveItemBehaviour __instance,
-            TransitRoute route,
-            ItemInstance templateItem,
-            ref bool __result)
-        {
-            if (UnpackTransitRouting.TryGetUnpackDestination(route, out _))
-            {
-                __result = UnpackTransitRouting.ValidateUnpackInputRoute(
-                    __instance, route, templateItem, templateItem?.ID, out _);
-                return false;
-            }
-
-            if (!UnpackTransitRouting.TryGetUnpackSource(route, out _))
-                return true;
-
-            __result = UnpackTransitRouting.ValidateProductRoute(
-                __instance,
-                route,
-                templateItem?.ID,
-                out _);
-            return false;
-        }
-    }
-
-    [HarmonyPatch(typeof(MoveItemBehaviour), "TakeItem", new System.Type[] { })]
-    static class MoveItemBehaviourTakeItemPatch
-    {
-        static bool Prefix(MoveItemBehaviour __instance)
-        {
-            if (!UnpackTransitRouting.TryGetUnpackSource(__instance?.assignedRoute, out var station))
-                return true;
-
-            try
-            {
-                var product = station.ProductSlot?.ItemInstance;
-                if (product is null || station.ProductSlot.Quantity <= 0)
-                    return false;
-
-                int amount = station.ProductSlot.Quantity;
-                if (__instance.maxMoveAmount > 0)
-                    amount = System.Math.Min(amount, __instance.maxMoveAmount);
-
-                amount = System.Math.Min(
-                    amount,
-                    __instance.Npc.Inventory.GetCapacityForItem(product));
-                amount = System.Math.Min(
-                    amount,
-                    __instance.assignedRoute.Destination.GetInputCapacityForItem(
-                        product,
-                        __instance.Npc,
-                        true));
-
-                if (amount <= 0) return false;
-
-                var copy = product.GetCopy(amount);
-                station.ProductSlot.ChangeQuantity(-amount, false);
-                __instance.Npc.Inventory.InsertItem(copy, true);
-                __instance.assignedRoute.Destination.ReserveInputSlotsForItem(
-                    copy,
-                    __instance.Npc.NetworkObject);
-                __instance.grabbedAmount = amount;
-
-                MelonLogger.Msg($"Packager collected {amount} unpacked item(s) for delivery.");
-            }
-            catch (System.Exception ex)
-            {
-                MelonLogger.Error($"Failed to collect unpacked product: {ex}");
             }
 
             return false;

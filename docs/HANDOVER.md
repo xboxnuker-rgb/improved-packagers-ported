@@ -274,6 +274,16 @@ Candidate 16 removes the manual destination transition, carried-route recovery, 
 - Static API verification: passed against the supplied f13 interop assembly.
 - Live-game verification: pending the same isolated output-delivery and packaged-input tests.
 
+Candidate 16 runtime result (reported after test): behavior remained similar, the worker held no product, and the expected custom pickup trace was not observed. That run stopped during station/route selection, before `TakeItem()`. Inspection also found that the remaining custom transfer hooks could disagree with f13's reservation-aware validation after a pickup, so candidate 17 removes those hooks instead of layering another state workaround.
+
+### Native transit candidate 17
+
+Candidate 17 removes the final custom `TakeItem()` replacement and the custom move-item route/destination validators. `StationModeRegistry` exposes `ProductSlot` as the station's transit output, and the worker-selection and start hooks now reassert that bridge immediately before calling f13's own validation. The game can therefore perform its normal source lookup, pickup, destination reservation, walk, insertion, lock cleanup, and shutdown without duplicated transfer bookkeeping.
+
+Unpack-mode `IsAcceptingItems` remains available for empty and partially filled `PackagingSlot` inputs; item-specific compatibility and capacity are enforced by f13 against the added input slot.
+
+The assembly logs `Compatibility build f13-native-transit-r1 loaded.` at startup so a test log can prove which binary ran.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
