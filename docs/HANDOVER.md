@@ -91,6 +91,11 @@ The f13 candidate selectively adapts that insight without taking PR #2's removed
 
 Static API verification and the Release build pass for this candidate. Runtime testing must compare Improved Packagers alone, then the same scenario with Harder Working Employees enabled. The received full-set log identifies Harder Working Employees `2.2.3` as tested against game `0.3.4f4`; do not change that mod unless the comparison proves it still bypasses the corrected station slots on f13.
 
+- Candidate source: `14b6e5b4aff869b51939f8fd6336cf0ae4653505`
+- Candidate DLL SHA-256: `6B842125A714CC4A0C397ED8043F2011E9736EF7E6FC1B95FBA8427AB0E5B8BC`
+- Candidate package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test2.zip`
+- Candidate package SHA-256: `B13F852C4570914317E77DE08780D674761C8F8DF1648C58B03C810A88D3F62F`
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
