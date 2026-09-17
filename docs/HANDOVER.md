@@ -159,6 +159,21 @@ Candidate 6 batches every currently acceptable stack during one pickup, accumula
 - Candidate 6 package SHA-256: `688607B492D27028E8CB55FCBC5B358F19E1BD67DD96BB0BC7470E30E7B1FD0E`
 - Candidate 6 Release build: zero warnings and zero errors; exact `WalkToDestination()` API verification passed.
 
+Candidate 6 log received on 2026-09-17:
+
+- Log SHA-256: `97F92DD3854B0D14551A3CD5C60A79A0C0E8557AEB5806A8A2BA83927FC8405F`
+- The exact candidate 6 DLL SHA-256 `B075A4D7D060336EB77F7C05ACF9695DB8616BB19F5F7AE5A3AD3D7A22F2B9F9` loaded on f13.
+- The worker collected five 20-item stacks, then walked partway toward storage before returning to the same station and repeating the pickup. This indicates the source-selection layer reinitialized the route while a carried load was still present.
+- No Improved Packagers Harmony or undefined-target error appeared. Existing DeliveryVehicle and DeliverySpotsPlus exceptions are unrelated.
+
+Candidate 7 guards both `GetStationMoveItems()` and `StartMoveItem()` against that carried-load reinitialization. When the active unpack route has matching product in the worker inventory, it suppresses a new station assignment and calls `WalkToDestination()` to continue the existing delivery leg.
+
+- Candidate 7 source: `9785c6712dbcc6d4bd27ca5379722eb4e04c6391`
+- Candidate 7 DLL SHA-256: `21AB28B6DF29380E055293BFFB79F3A8F4B699A34F92DBBF32D011865B2939BC`
+- Candidate 7 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test7.zip`
+- Candidate 7 package SHA-256: `30ABA82F85A22E7E932F53F25F1E6D9A6B1985A4803ED13502ED41C63ACA0C34`
+- Candidate 7 Release build: zero warnings and zero errors; all required f13 signatures passed.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
