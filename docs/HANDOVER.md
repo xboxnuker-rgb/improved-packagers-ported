@@ -112,6 +112,21 @@ Candidate 3 adds the narrow f13 worker handoff:
 
 Candidate 3 must pass the same isolated scenario before HWE is re-enabled. Only port HWE if isolated delivery passes and the identical HWE-enabled scenario then fails.
 
+Candidate 3 log received on 2026-09-17:
+
+- Log SHA-256: `6817568679C101BCFB17F01F463441D50C69D84C30C5EEC7013E0F98931924C2`
+- The exact candidate DLL hash loaded on Schedule I `0.4.6f13` with HWE absent.
+- The worker unpacked the packaged item but again did not collect or deliver the loose product.
+- Neither the candidate's start-delivery message nor an Improved Packagers exception appeared. This shows f13 rejected the route before `StartMoveItem`, because vanilla `IsTransitRouteValid` still evaluates the physical packaged-item output slot.
+- The run was HWE-free but not otherwise isolated; unrelated DeliverySpotsPlus and delivery-vehicle exceptions remain present.
+
+Candidate 4 overrides only unpack-mode transit validation and pickup to use `ProductSlot`, while keeping vanilla behavior for every other route. It uses f13's exact destination-capacity, NPC-inventory, item-copy, quantity-change, reservation, and move APIs and emits a one-time reason if delivery remains blocked.
+
+- Candidate 4 source: `9fa2c5ebed855f4df09ecaeef35a044db66e451e`
+- Candidate 4 DLL SHA-256: `6486BC9241F989B692CE5AE1F0DB5C57D4E9B302149A6CD8676AECD1E3C1BE1A`
+- Candidate 4 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test4.zip`
+- Candidate 4 package SHA-256: `CE0180B6B5199F765B3655CA8E548B061D669AF556C4CE84B6CC75D738D96672`
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
