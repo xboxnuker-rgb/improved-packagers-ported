@@ -28,7 +28,7 @@ Configuration is stored in:
 - Loading Bay preferences: `UserData/MelonPreferences.cfg`
 - Packaging Station modes: `UserData/ImprovedPackagers.json`
 
-On first installation, open each existing Packaging Station UI once so the mod can observe and persist its selected mode.
+Opening or toggling an existing Packaging Station records an explicit mode. If no saved mode exists, the worker can infer it when f13 reports exactly one work mode as ready.
 
 ## Features
 
@@ -88,7 +88,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md), and the [current
 ## Source and contact
 
 - License: [MIT](LICENSE.txt)
-- Source: [GuysWeForgotDre/Improved-Packagers](https://github.com/GuysWeForgotDre/Improved-Packagers)
+- Maintained port: [xboxnuker-rgb/improved-packagers-ported](https://github.com/xboxnuker-rgb/improved-packagers-ported)
+- Original upstream: [GuysWeForgotDre/Improved-Packagers](https://github.com/GuysWeForgotDre/Improved-Packagers)
 - Formerly called *Packagers Load Vehicles*
 - Discord: `OnlyMurdersSometimes`
 - GitHub: `GuysWeForgotDre`

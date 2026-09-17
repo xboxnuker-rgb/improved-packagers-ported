@@ -6,7 +6,8 @@ Read `README.md`, `AGENTS.md`, and `docs/HANDOVER.md` before starting. Repositor
 
 ## Branches and commits
 
-- Branch from refreshed upstream `master` using `<type>/<short-description>`, for example `fix/schedule-i-0.4.6f13-compat`.
+- Branch from this repository's refreshed `main` using `<type>/<short-description>`, for example `fix/schedule-i-compat`.
+- Keep the original `GuysWeForgotDre/Improved-Packagers` repository configured as `upstream` when checking for later fixes.
 - Use conventional commits such as `fix: support Schedule I 0.4.6f13`.
 - Keep one compatibility target or gameplay outcome per branch where practical.
 - Open a draft pull request while verification is in progress and make remaining checks explicit.

@@ -6,7 +6,7 @@
     <Authors>Dre</Authors>
     <PackageId>ImprovedPackagers</PackageId>
     <Description>Enables Schedule I Packagers to unpack products and load vehicles parked in Loading Bays</Description>
-    <RepositoryUrl>https://github.com/GuysWeForgotDre/Improved-Packagers</RepositoryUrl>
+    <RepositoryUrl>https://github.com/xboxnuker-rgb/improved-packagers-ported</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <PropertyGroup>

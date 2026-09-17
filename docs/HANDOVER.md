@@ -2,11 +2,22 @@
 
 ## Schedule I 0.4.6f13 IL2CPP compatibility port
 
-- Status: `AWAITING_RUNTIME_VERIFICATION`
+- Status: `AWAITING_TEST18_RUNTIME_VERIFICATION`
+- Maintained repository: `https://github.com/xboxnuker-rgb/improved-packagers-ported`
+- Merge target: `main`
 - Branch: `fix/schedule-i-0.4.6f13-compat`
 - Base: upstream `master` at `4519a1f48e3f461aa78681bb5a48bd683e2b6962`
-- Compatibility implementation: `4e9cb2f9decedc9a3299cec96f23974f2ff6f9ec`
-- Requested pull request account: `xboxnuker-rgb`
+- Current compatibility implementation: `f36e4f81876c0b53787d35383f206e448f2809f8`
+
+### Alex: continue from here
+
+1. Pull `main` from `xboxnuker-rgb/improved-packagers-ported`; all source and investigation history is retained there.
+2. Runtime-test `ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test18.zip`, which is deliberately not committed because build artifacts are excluded from source control.
+3. Confirm the log contains `Compatibility build f13-native-transit-r2 loaded.` and then either `Packaging Station mode inferred as Unpackage from its ready state.` or an explicit station-mode line.
+4. Verify output delivery and packaged input loading with Harder Working Employees disabled first, then enabled.
+5. Add the resulting log conclusion and hashes to this handover. If both routes pass, replace the pending status above and prepare the upstream pull request from `fix/schedule-i-0.4.6f13-compat`.
+
+Never commit Schedule I, MelonLoader, generated interop, save, log, or packaged artifact files. Local build commands and reference layout are in `README.md`.
 
 ### Scope
 

@@ -1,7 +1,7 @@
 {
   "name": "Improved Packagers",
   "version_number": "2.0.1",
-  "website_url": "https://github.com/GuysWeForgotDre/Improved-Packagers",
+  "website_url": "https://github.com/xboxnuker-rgb/improved-packagers-ported",
   "description": "Enables Schedule I Packagers to unpack products and load vehicles parked in Loading Bays",
   "dependencies": [
     "LavaGang-MelonLoader-0.7.0"

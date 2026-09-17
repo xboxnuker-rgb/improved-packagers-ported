@@ -25,7 +25,7 @@ Configuration is stored in:
 - Loading Bay preferences: `UserData/MelonPreferences.cfg`
 - Packaging Station modes: `UserData/ImprovedPackagers.json`
 
-On first installation, open each existing Packaging Station UI once so the mod can observe and persist its selected mode.
+Opening or toggling an existing Packaging Station records an explicit mode. If no saved mode exists, the worker can infer it when f13 reports exactly one work mode as ready.
 
 ## Features
 
@@ -48,4 +48,4 @@ On first installation, open each existing Packaging Station UI once so the mod c
 - A first-run missing-file error for `ImprovedPackagers.json` indicates an older build is still installed.
 - The `PackagerConfiguration::.ctor` IL2CPP backend fallback is not patched by this mod. Reproduce it with an isolated mod set before attributing it to Improved Packagers.
 
-Full build and contribution documentation is available in the source repository: [GuysWeForgotDre/Improved-Packagers](https://github.com/GuysWeForgotDre/Improved-Packagers).
+Full build and contribution documentation is available in the maintained source repository: [xboxnuker-rgb/improved-packagers-ported](https://github.com/xboxnuker-rgb/improved-packagers-ported). The original project remains credited at [GuysWeForgotDre/Improved-Packagers](https://github.com/GuysWeForgotDre/Improved-Packagers).
