@@ -127,6 +127,23 @@ Candidate 4 overrides only unpack-mode transit validation and pickup to use `Pro
 - Candidate 4 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test4.zip`
 - Candidate 4 package SHA-256: `CE0180B6B5199F765B3655CA8E548B061D669AF556C4CE84B6CC75D738D96672`
 
+Candidate 4 log received on 2026-09-17:
+
+- Log SHA-256: `91F57B6379A547519D93C176DC099BFEE86AD1B66C21E1BDCEADCF017079CC2F`
+- Schedule I `0.4.6f13` and MelonLoader `0.7.0 Open-Beta` are confirmed.
+- MelonLoader loaded the exact candidate 4 DLL SHA-256 `6486BC9241F989B692CE5AE1F0DB5C57D4E9B302149A6CD8676AECD1E3C1BE1A`.
+- Harder Working Employees was absent, although other unrelated mods remained enabled.
+- The worker successfully collected five 20-item stacks from `ProductSlot`.
+- Immediately afterward, Improved Packagers reported `Packager inventory has no capacity for the unpacked product.` The route validator therefore cancelled the job at the source-to-destination transition instead of allowing a full worker to deliver the product already carried.
+
+Candidate 5 preserves the in-progress route when either the station still contains the expected product or the worker already carries matching product. Free worker inventory capacity is required only before the first pickup, so multi-stack collection remains supported while a full worker can proceed to delivery. The exact `NPCInventory.GetIdenticalItemAmount(ItemInstance)` signature is included in static API verification.
+
+- Candidate 5 source: `cfa6d8b979cc04324814c31f5103e2a5cfd883ff`
+- Candidate 5 DLL SHA-256: `0566F56A67EF02A1F0928272A30D9E6DA964CAF9B82ABCBED2FE6A84D05FA208`
+- Candidate 5 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test5.zip`
+- Candidate 5 package SHA-256: `ED9BB327265527DFD89CA6161B0AF7765743B8305C26A4D715A24BD37AEC30DD`
+- Candidate 5 Release build: zero warnings and zero errors; all required f13 signatures passed.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
