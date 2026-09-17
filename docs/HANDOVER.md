@@ -247,6 +247,29 @@ Candidate 15 adds the station's `PackagingSlot` to unpack-mode `InputSlots` and 
 - Candidate 15 package SHA-256: `F243D8DE4EFBA06A4F751D13188690323BC810F257162DDF4EDD174792FD3B5D`
 - Candidate 15 Release build: zero warnings and zero errors; all required f13 signatures passed.
 
+### Native f13 control-flow inspection and candidate 16
+
+The exact f13 IL2CPP binary and metadata were supplied and staged outside the repository:
+
+- `GameAssembly.dll` SHA-256: `9531A85606AF7A5C545EF44895C19F3F08F77CC221479B686539FA5B72141626`
+- `global-metadata.dat` SHA-256: `3A5A6E46BD8E6687F63228211978FA94E0885DCB6AE3950AA8D01F047355DE5F`
+- Cpp2IL detected metadata version 31 and produced a native ISIL/diffable-C# inspection dump successfully.
+
+The native `MoveItemBehaviour` control flow explains the repeated source/destination loop:
+
+1. `GrabItem` sets state `Grabbing`, calls `TakeItem()`, waits, clears its coroutine, and returns the state to `Idle`.
+2. On the following server tick, vanilla `OnActiveTick()` detects both a matching carried item and `grabbedAmount > 0`, then calls `WalkToDestination()`.
+3. At the destination, vanilla starts `PlaceItem()`; its coroutine inserts the carried copy through `ITransitEntity.InsertItemIntoInput`, removes the carried quantity, clears its state, and disables the behavior.
+
+Candidates 6-15 called `WalkToDestination()` before the native grab coroutine completed. The still-running coroutine then reset the state to `Idle`, while the added `PlaceItem()` prefix bypassed the native completion coroutine entirely. That combination caused the visible turn-around/reselection loop.
+
+Candidate 16 removes the manual destination transition, carried-route recovery, `OnActiveTick()` override, and `PlaceItem()` override. The only pickup substitution retained is the required one: `TakeItem()` reads loose product from the unpack station's `ProductSlot`, sets `grabbedAmount`, inserts it into the NPC inventory, and reserves destination input slots. f13 then owns the normal wait, walk, deposit, lock cleanup, and behavior shutdown sequence.
+
+- Candidate 16 uses vanilla's `-1` unlimited/default `maxMoveAmount` value when initializing the route.
+- Release build: zero warnings and zero errors.
+- Static API verification: passed against the supplied f13 interop assembly.
+- Live-game verification: pending the same isolated output-delivery and packaged-input tests.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.

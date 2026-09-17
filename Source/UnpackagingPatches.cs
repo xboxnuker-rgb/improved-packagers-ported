@@ -22,7 +22,6 @@ using ScheduleOne.UI.Stations;
 #endif
 using HarmonyLib;
 using MelonLoader;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -82,57 +81,6 @@ namespace ImprovedPackagers
                 route,
                 station.ProductSlot.ItemInstance,
                 out invalidReason);
-        }
-
-        public static bool HasCarriedUnpackProduct(Packager packager)
-        {
-            var behaviour = packager?.MoveItemBehaviour;
-            var template = behaviour?.itemToRetrieveTemplate;
-            return !(behaviour?.assignedRoute is null) &&
-                TryGetUnpackSource(behaviour.assignedRoute, out _) &&
-                !(template is null) &&
-                behaviour.Npc?.Inventory?.GetIdenticalItemAmount(template) > 0;
-        }
-
-        public static bool HasCarriedProductForStation(Packager packager, PackagingStation station)
-        {
-            var behaviour = packager?.MoveItemBehaviour;
-            var template = behaviour?.itemToRetrieveTemplate;
-            if (station is null || behaviour is null || template is null ||
-                !StationModeRegistry.TryGetMode(station, out var mode) ||
-                mode != PackagingStation.EMode.Unpackage)
-                return false;
-
-            var sourceProduct = station.ProductSlot?.ItemInstance;
-            return (sourceProduct is null || sourceProduct.ID == template.ID) &&
-                behaviour.Npc?.Inventory?.GetIdenticalItemAmount(template) > 0 &&
-                !(GetConfiguration(station)?.DestinationRoute is null);
-        }
-
-        public static bool ResumeCarriedDelivery(Packager packager, PackagingStation station)
-        {
-            if (!HasCarriedProductForStation(packager, station)) return false;
-
-            var behaviour = packager.MoveItemBehaviour;
-            var route = GetConfiguration(station).DestinationRoute;
-            int carriedAmount = behaviour.Npc.Inventory.GetIdenticalItemAmount(behaviour.itemToRetrieveTemplate);
-
-            bool sameRoute = TryGetUnpackSource(behaviour.assignedRoute, out var assignedStation) &&
-                assignedStation.GUID == station.GUID;
-            if (!sameRoute)
-            {
-#if Il2Cpp
-                behaviour.Initialize(route, behaviour.itemToRetrieveTemplate, 0, false);
-                behaviour.Enable_Networked();
-#elif Mono
-                behaviour.Initialize(route, behaviour.itemToRetrieveTemplate);
-                behaviour.Enable_Networked(null);
-#endif
-            }
-
-            behaviour.grabbedAmount = carriedAmount;
-            behaviour.WalkToDestination();
-            return true;
         }
 
         public static void LogRouteFailureOnce(PackagingStation station, string reason)
@@ -408,13 +356,6 @@ namespace ImprovedPackagers
         {
             try
             {
-                if (!(__result is null) &&
-                    UnpackTransitRouting.ResumeCarriedDelivery(__instance, __result))
-                {
-                    __result = null;
-                    return;
-                }
-
                 if (!(__result is null))
                 {
                     if (!StationModeRegistry.TryGetMode(__result, out var selectedMode) ||
@@ -438,12 +379,6 @@ namespace ImprovedPackagers
                         !StationModeRegistry.TryGetMode(station, out var mode) ||
                         mode != PackagingStation.EMode.Unpackage)
                         continue;
-
-                    if (UnpackTransitRouting.ResumeCarriedDelivery(__instance, station))
-                    {
-                        __result = null;
-                        return;
-                    }
 
                     if (UnpackTransitRouting.HasValidProductRoute(__instance, station, out var reason))
                     {
@@ -475,12 +410,6 @@ namespace ImprovedPackagers
 
             try
             {
-                if (UnpackTransitRouting.ResumeCarriedDelivery(__instance, station))
-                {
-                    MelonLogger.Msg("Packager resumed delivery of carried unpacked product.");
-                    return false;
-                }
-
                 if (!UnpackTransitRouting.HasValidProductRoute(__instance, station))
                     return false;
 
@@ -488,7 +417,7 @@ namespace ImprovedPackagers
                 var product = station.ProductSlot.ItemInstance;
 
 #if Il2Cpp
-                __instance.MoveItemBehaviour.Initialize(route, product, 0, false);
+                __instance.MoveItemBehaviour.Initialize(route, product, -1, false);
                 __instance.MoveItemBehaviour.Enable_Networked();
 #elif Mono
                 __instance.MoveItemBehaviour.Initialize(route, product);
@@ -670,19 +599,6 @@ namespace ImprovedPackagers
     [HarmonyPatch(typeof(MoveItemBehaviour), "TakeItem", new System.Type[] { })]
     static class MoveItemBehaviourTakeItemPatch
     {
-        private static IEnumerator ResumeDestinationNextFrame(MoveItemBehaviour behaviour)
-        {
-            yield return null;
-            if (!(behaviour is null))
-                behaviour.WalkToDestination();
-        }
-
-        private static void QueueDestinationTransition(MoveItemBehaviour behaviour)
-        {
-            if (!(behaviour is null))
-                MelonCoroutines.Start(ResumeDestinationNextFrame(behaviour));
-        }
-
         static bool Prefix(MoveItemBehaviour __instance)
         {
             if (!UnpackTransitRouting.TryGetUnpackSource(__instance?.assignedRoute, out var station))
@@ -692,14 +608,7 @@ namespace ImprovedPackagers
             {
                 var product = station.ProductSlot?.ItemInstance;
                 if (product is null || station.ProductSlot.Quantity <= 0)
-                {
-                    var carriedProduct = __instance.itemToRetrieveTemplate;
-                    if (!(carriedProduct is null) &&
-                        __instance.Npc?.Inventory?.GetIdenticalItemAmount(carriedProduct) > 0)
-                        QueueDestinationTransition(__instance);
-
                     return false;
-                }
 
                 int amount = station.ProductSlot.Quantity;
                 if (__instance.maxMoveAmount > 0)
@@ -726,83 +635,10 @@ namespace ImprovedPackagers
                 __instance.grabbedAmount = amount;
 
                 MelonLogger.Msg($"Packager collected {amount} unpacked item(s) for delivery.");
-                if (__instance.grabbedAmount > 0)
-                    QueueDestinationTransition(__instance);
             }
             catch (System.Exception ex)
             {
                 MelonLogger.Error($"Failed to collect unpacked product: {ex}");
-            }
-
-            return false;
-        }
-    }
-
-    [HarmonyPatch(typeof(MoveItemBehaviour), nameof(MoveItemBehaviour.OnActiveTick))]
-    static class MoveItemBehaviourOnActiveTickPatch
-    {
-        static bool Prefix(MoveItemBehaviour __instance)
-        {
-            var template = __instance?.itemToRetrieveTemplate;
-            if (__instance is null ||
-                !UnpackTransitRouting.TryGetUnpackSource(__instance.assignedRoute, out _) ||
-                template is null ||
-                __instance.Npc?.Inventory?.GetIdenticalItemAmount(template) <= 0 ||
-                __instance.currentState != MoveItemBehaviour.EState.Grabbing)
-                return true;
-
-            __instance.WalkToDestination();
-            return false;
-        }
-    }
-
-    [HarmonyPatch(typeof(MoveItemBehaviour), nameof(MoveItemBehaviour.PlaceItem))]
-    static class MoveItemBehaviourPlaceItemPatch
-    {
-        static bool Prefix(MoveItemBehaviour __instance)
-        {
-            if (!UnpackTransitRouting.TryGetUnpackSource(__instance?.assignedRoute, out _))
-                return true;
-
-            try
-            {
-                var destination = __instance.assignedRoute?.Destination;
-                var template = __instance.itemToRetrieveTemplate;
-                var inventory = __instance.Npc?.Inventory;
-                if (destination is null || template is null || inventory is null)
-                    return false;
-
-                int amount = System.Math.Min(
-                    __instance.grabbedAmount,
-                    inventory.GetIdenticalItemAmount(template));
-                if (amount <= 0) return false;
-
-                int destinationCapacity = destination.GetInputCapacityForItem(template, __instance.Npc, false);
-                if (destinationCapacity > 0)
-                    amount = System.Math.Min(amount, destinationCapacity);
-                if (amount <= 0) return false;
-
-                int remaining = amount;
-                foreach (var slot in inventory.ItemSlots)
-                {
-                    var item = slot?.ItemInstance;
-                    if (item is null || item.ID != template.ID || slot.Quantity <= 0)
-                        continue;
-
-                    int take = System.Math.Min(slot.Quantity, remaining);
-                    destination.InsertItemIntoInput(item.GetCopy(take), __instance.Npc);
-                    slot.ChangeQuantity(-take, false);
-                    remaining -= take;
-                    if (remaining <= 0) break;
-                }
-
-                destination.RemoveSlotLocks(__instance.Npc.NetworkObject);
-                __instance.grabbedAmount = 0;
-                MelonLogger.Msg($"Packager deposited {amount - remaining} unpacked item(s).");
-            }
-            catch (System.Exception ex)
-            {
-                MelonLogger.Error($"Failed to deposit unpacked product: {ex}");
             }
 
             return false;
