@@ -22,6 +22,7 @@ using ScheduleOne.UI.Stations;
 #endif
 using HarmonyLib;
 using MelonLoader;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -488,6 +489,19 @@ namespace ImprovedPackagers
     [HarmonyPatch(typeof(MoveItemBehaviour), "TakeItem", new System.Type[] { })]
     static class MoveItemBehaviourTakeItemPatch
     {
+        private static IEnumerator ResumeDestinationNextFrame(MoveItemBehaviour behaviour)
+        {
+            yield return null;
+            if (!(behaviour is null))
+                behaviour.WalkToDestination();
+        }
+
+        private static void QueueDestinationTransition(MoveItemBehaviour behaviour)
+        {
+            if (!(behaviour is null))
+                MelonCoroutines.Start(ResumeDestinationNextFrame(behaviour));
+        }
+
         static bool Prefix(MoveItemBehaviour __instance)
         {
             if (!UnpackTransitRouting.TryGetUnpackSource(__instance?.assignedRoute, out var station))
@@ -501,7 +515,7 @@ namespace ImprovedPackagers
                     var carriedProduct = __instance.itemToRetrieveTemplate;
                     if (!(carriedProduct is null) &&
                         __instance.Npc?.Inventory?.GetIdenticalItemAmount(carriedProduct) > 0)
-                        __instance.WalkToDestination();
+                        QueueDestinationTransition(__instance);
 
                     return false;
                 }
@@ -547,7 +561,7 @@ namespace ImprovedPackagers
 
                 if (__instance.grabbedAmount > 0 ||
                     __instance.Npc.Inventory.GetIdenticalItemAmount(product) > 0)
-                    __instance.WalkToDestination();
+                    QueueDestinationTransition(__instance);
             }
             catch (System.Exception ex)
             {
