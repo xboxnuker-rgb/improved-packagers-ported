@@ -209,6 +209,16 @@ Candidate 11 removes the batch loop. Each custom ProductSlot pickup takes only o
 - Candidate 11 package SHA-256: `8E2019AE9DEE764834B46ABD3D9F99781EF0FE09441DBD7BA1571CCDB450DDD1`
 - Candidate 11 Release build: zero warnings and zero errors; all required f13 signatures passed.
 
+Candidate 11 runtime result (reported after test): the worker still walked up to the shelf, locked the slot, turned around without depositing, and continued filling/looping. This shows the remaining defect is in the vanilla `PlaceItem()` path for the loose `ProductSlot` item, not in the source quantity (including five-item jars).
+
+Candidate 12 adds an unpack-only placement implementation using f13's `ITransitEntity.InsertItemIntoInput(ItemInstance, NPC)` and `RemoveSlotLocks(NetworkObject)` APIs. It moves one actual carried stack into the selected destination, clears that quantity from the worker inventory, and leaves package-mode placement untouched.
+
+- Candidate 12 source: `7aad20fcb6a40e58af6fcfc90a05ca05a8497194`
+- Candidate 12 DLL SHA-256: `5903176C8189A343D1C774379768A524B03D5F4CE584DE4BB7FB5B1A270C0F76`
+- Candidate 12 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test12.zip`
+- Candidate 12 package SHA-256: `E9D7C778936C67F44065E4D743649B0B8C634805311A207D7284D7212D5071CE`
+- Candidate 12 Release build: zero warnings and zero errors; all required f13 signatures passed.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
