@@ -427,33 +427,57 @@ namespace ImprovedPackagers
             {
                 var product = station.ProductSlot?.ItemInstance;
                 if (product is null || station.ProductSlot.Quantity <= 0)
+                {
+                    var carriedProduct = __instance.itemToRetrieveTemplate;
+                    if (!(carriedProduct is null) &&
+                        __instance.Npc?.Inventory?.GetIdenticalItemAmount(carriedProduct) > 0)
+                        __instance.WalkToDestination();
+
                     return false;
+                }
 
-                int amount = station.ProductSlot.Quantity;
-                if (__instance.maxMoveAmount > 0)
-                    amount = System.Math.Min(amount, __instance.maxMoveAmount);
+                int collected = 0;
+                while (!(station.ProductSlot?.ItemInstance is null) &&
+                       station.ProductSlot.Quantity > 0 &&
+                       station.ProductSlot.ItemInstance.ID == product.ID)
+                {
+                    int amount = station.ProductSlot.Quantity;
+                    if (__instance.maxMoveAmount > 0)
+                    {
+                        int remainingMoveAmount = __instance.maxMoveAmount - __instance.grabbedAmount;
+                        if (remainingMoveAmount <= 0) break;
+                        amount = System.Math.Min(amount, remainingMoveAmount);
+                    }
 
-                amount = System.Math.Min(
-                    amount,
-                    __instance.Npc.Inventory.GetCapacityForItem(product));
-                amount = System.Math.Min(
-                    amount,
-                    __instance.assignedRoute.Destination.GetInputCapacityForItem(
-                        product,
-                        __instance.Npc,
-                        true));
+                    amount = System.Math.Min(
+                        amount,
+                        __instance.Npc.Inventory.GetCapacityForItem(product));
+                    amount = System.Math.Min(
+                        amount,
+                        __instance.assignedRoute.Destination.GetInputCapacityForItem(
+                            product,
+                            __instance.Npc,
+                            true));
 
-                if (amount <= 0) return false;
+                    if (amount <= 0) break;
 
-                var copy = product.GetCopy(amount);
-                __instance.grabbedAmount = amount;
-                station.ProductSlot.ChangeQuantity(-amount, false);
-                __instance.Npc.Inventory.InsertItem(copy, true);
-                __instance.assignedRoute.Destination.ReserveInputSlotsForItem(
-                    copy,
-                    __instance.Npc.NetworkObject);
+                    var copy = product.GetCopy(amount);
+                    station.ProductSlot.ChangeQuantity(-amount, false);
+                    __instance.Npc.Inventory.InsertItem(copy, true);
+                    __instance.assignedRoute.Destination.ReserveInputSlotsForItem(
+                        copy,
+                        __instance.Npc.NetworkObject);
 
-                MelonLogger.Msg($"Packager collected {amount} unpacked item(s) for delivery.");
+                    __instance.grabbedAmount += amount;
+                    collected += amount;
+                }
+
+                if (collected > 0)
+                    MelonLogger.Msg($"Packager collected {collected} unpacked item(s) for delivery.");
+
+                if (__instance.grabbedAmount > 0 ||
+                    __instance.Npc.Inventory.GetIdenticalItemAmount(product) > 0)
+                    __instance.WalkToDestination();
             }
             catch (System.Exception ex)
             {
