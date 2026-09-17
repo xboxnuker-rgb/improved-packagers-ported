@@ -43,8 +43,13 @@ try {
         param(
             [string] $TypeName,
             [string] $MethodName,
-            [string[]] $ParameterTypes = @()
+            [string[]] $ParameterTypes = @(),
+            [string[]] $ParameterNames = @()
         )
+
+        if ($ParameterNames.Count -ne 0 -and $ParameterNames.Count -ne $ParameterTypes.Count) {
+            throw "Parameter-name verification for $TypeName::$MethodName must cover every parameter."
+        }
 
         $type = Get-RequiredType $TypeName
         $matches = @($type.Methods | Where-Object {
@@ -54,6 +59,9 @@ try {
 
             for ($index = 0; $index -lt $ParameterTypes.Count; $index++) {
                 if ($_.Parameters[$index].ParameterType.FullName -ne $ParameterTypes[$index]) {
+                    return $false
+                }
+                if ($ParameterNames.Count -ne 0 -and $_.Parameters[$index].Name -ne $ParameterNames[$index]) {
                     return $false
                 }
             }
@@ -66,7 +74,8 @@ try {
             throw "Expected exactly one method for $signature; found $($matches.Count)."
         }
 
-        Write-Output "PASS method $TypeName::$MethodName($($ParameterTypes -join ', '))"
+        $nameSuffix = if ($ParameterNames.Count) { " names=[$($ParameterNames -join ', ')]" } else { "" }
+        Write-Output "PASS method $TypeName::$MethodName($($ParameterTypes -join ', '))$nameSuffix"
     }
 
     function Assert-Property {
@@ -90,7 +99,7 @@ try {
 
     Assert-Method "Il2CppScheduleOne.UI.Stations.PackagingStationCanvas" "Open" @(
         "Il2CppScheduleOne.ObjectScripts.PackagingStation"
-    )
+    ) @("station")
     Assert-Method "Il2CppScheduleOne.UI.Stations.PackagingStationCanvas" "ToggleMode"
     Assert-Method "Il2CppScheduleOne.UI.Stations.PackagingStationCanvas" "SetMode" @(
         "Il2CppScheduleOne.ObjectScripts.PackagingStation/EMode"
@@ -100,11 +109,11 @@ try {
 
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.PackagingStationBehaviour" "IsStationReady" @(
         "Il2CppScheduleOne.ObjectScripts.PackagingStation"
-    )
+    ) @("station")
     Assert-Method "Il2CppScheduleOne.Employees.Packager" "GetStationMoveItems"
     Assert-Method "Il2CppScheduleOne.Employees.Packager" "StartMoveItem" @(
         "Il2CppScheduleOne.ObjectScripts.PackagingStation"
-    )
+    ) @("station")
     Assert-Property "Il2CppScheduleOne.Employees.Packager" "Configuration" "Il2CppScheduleOne.Management.EntityConfiguration"
     Assert-Property "Il2CppScheduleOne.Employees.Employee" "MoveItemBehaviour" "Il2CppScheduleOne.NPCs.Behaviour.MoveItemBehaviour"
     Assert-Property "Il2CppScheduleOne.Management.PackagerConfiguration" "AssignedStations" 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.ObjectScripts.PackagingStation>'
@@ -180,7 +189,7 @@ try {
     )
     Assert-Method "Il2CppScheduleOne.ObjectScripts.PackagingStation" "SetNPCUser" @(
         "Il2CppFishNet.Object.NetworkObject"
-    )
+    ) @("npcObject")
     Assert-Method "Il2CppScheduleOne.ObjectScripts.PackagingStation" "Destroy"
     Assert-Method "Il2CppScheduleOne.Persistence.SaveManager" "Save" @("System.String")
     Assert-Method "Il2CppScheduleOne.Delivery.LoadingDock" "SetOccupant" @(

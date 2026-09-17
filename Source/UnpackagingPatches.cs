@@ -129,8 +129,7 @@ namespace ImprovedPackagers
         {
             if (station is null) { __result = false; return false; }
 
-            var mode = PackagingStation.EMode.Package;
-            StationModeRegistry.TryGetMode(station, out mode);
+            var mode = StationModeRegistry.ResolveForWork(station);
 
             if (station.GetState(mode) != PackagingStation.EState.CanBegin)
             {
@@ -216,9 +215,7 @@ namespace ImprovedPackagers
         {
             if (__instance is null || __instance.NPCUserObject is null) return true;
 
-            var mode = PackagingStation.EMode.Package;
-            if (StationModeRegistry.TryGetMode(__instance, out var chosen))
-                mode = chosen;
+            var mode = StationModeRegistry.ResolveForWork(__instance);
 
             if (InstanceFinder.IsServer && mode == PackagingStation.EMode.Unpackage)
             {
@@ -323,14 +320,7 @@ namespace ImprovedPackagers
         static void Postfix(PackagingStation __instance, NetworkObject npcObject)
         {
             if (__instance is null || npcObject is null) return;
-            if (!StationModeRegistry.TryGetMode(__instance, out _))
-            {
-                bool canPack   = __instance.GetState(PackagingStation.EMode.Package)   == PackagingStation.EState.CanBegin;
-                bool canUnpack = __instance.GetState(PackagingStation.EMode.Unpackage) == PackagingStation.EState.CanBegin;
-
-                var chosen = canUnpack && !canPack ? PackagingStation.EMode.Unpackage : PackagingStation.EMode.Package;
-                StationModeRegistry.SetStickyIfNone(__instance, chosen);
-            }
+            StationModeRegistry.ResolveForWork(__instance);
         }
     }
 

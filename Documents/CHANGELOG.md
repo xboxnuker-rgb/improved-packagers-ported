@@ -10,6 +10,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Adhere
 - Preserved f13's native grab, walk, place, slot-lock, and behavior-completion state machine after substituting `ProductSlot` as the unpack source.
 - Returned unpack route validation, pickup, reservation, walking, placement, and cleanup to f13's native move-item implementation.
 - Reasserted `ProductSlot` as the unpack station's transit output when workers select and start a delivery.
+- Inferred a missing first-run station mode from f13's uniquely ready work mode, allowing an assigned Packager to claim an unpack job before `SetNPCUser` can run.
 - Covered f13 transit and destination validation for both loose-product output and packaged-item input routes.
 - Exposed empty and partially filled unpack-mode `PackagingSlot` capacity through `InputSlots` so configured workers can load bricks, jars, or baggies for breakdown.
 ## [2.0.0] - 2025-08-11
