@@ -184,6 +184,16 @@ Candidate 8 removes that dependency. It matches the carried template to an unpac
 - Candidate 8 package SHA-256: `0BC669C8AC73C2059444FAA7A7DDFDE6F5831A1944BC35BD40BADBC6CE6606AE`
 - Candidate 8 Release build: zero warnings and zero errors; all required f13 signatures passed.
 
+Candidate 8 runtime result (reported after test): behavior remained effectively unchanged. No carried-route recovery message appeared, and the worker continued the source-action loop. This indicates the repeated pickup occurs inside the active `TakeItem()` coroutine before the station-selection recovery path is reached.
+
+Candidate 9 defers the custom pickup's `WalkToDestination()` call by one frame with `MelonCoroutines.Start`, allowing the source coroutine to return before the state transition is applied.
+
+- Candidate 9 source: `67a27520ef8567d78c5db79d192d8a3dd05e2ecd`
+- Candidate 9 DLL SHA-256: `717E1CF5EB270B1B4ABA2C3D9A757654353B8E2F5143678216288E19F8C522A1`
+- Candidate 9 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test9.zip`
+- Candidate 9 package SHA-256: `103BD4EC65FB49D95A461EB0F324489E70496A1215D2141E540B6D8FBC5EBAA2`
+- Candidate 9 Release build: zero warnings and zero errors; all required f13 signatures passed.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
