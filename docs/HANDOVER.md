@@ -266,6 +266,10 @@ Candidates 6-15 called `WalkToDestination()` before the native grab coroutine co
 Candidate 16 removes the manual destination transition, carried-route recovery, `OnActiveTick()` override, and `PlaceItem()` override. The only pickup substitution retained is the required one: `TakeItem()` reads loose product from the unpack station's `ProductSlot`, sets `grabbedAmount`, inserts it into the NPC inventory, and reserves destination input slots. f13 then owns the normal wait, walk, deposit, lock cleanup, and behavior shutdown sequence.
 
 - Candidate 16 uses vanilla's `-1` unlimited/default `maxMoveAmount` value when initializing the route.
+- Candidate 16 source: `89dcf527ffbd813accb3dc4a16e151ea99deafe0`
+- Candidate 16 DLL SHA-256: `178DAFD3A056DFBA3C633360E72F8EF263BD0BBD052B94125834B2B297F556AA`
+- Candidate 16 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test16.zip`
+- Candidate 16 package SHA-256: `3C60255E8E4998D0513C58CE8B9EE1E6C0D0E3A567339A369FC8BBD475537DAD`
 - Release build: zero warnings and zero errors.
 - Static API verification: passed against the supplied f13 interop assembly.
 - Live-game verification: pending the same isolated output-delivery and packaged-input tests.
