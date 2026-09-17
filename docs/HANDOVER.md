@@ -284,6 +284,14 @@ Unpack-mode `IsAcceptingItems` remains available for empty and partially filled 
 
 The assembly logs `Compatibility build f13-native-transit-r1 loaded.` at startup so a test log can prove which binary ran.
 
+- Candidate 17 source: `b80ecbb9e017015b627912de07034e843a848b28`
+- Candidate 17 DLL SHA-256: `3A990A42E19C10B8037C85052E87BD56B5849CF3E926B8A5E8F7E42D00565731`
+- Candidate 17 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test17.zip`
+- Candidate 17 package SHA-256: `512F42624F0A057C66ADC05180D1D2D16BDA66F5D47E6F40533FAD3E5BF35DC9`
+- Release build: zero warnings and zero errors.
+- Static API verification: passed against the supplied f13 interop assembly.
+- Live-game verification: pending isolated output and input route tests.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
