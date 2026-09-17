@@ -154,6 +154,9 @@ try {
     Assert-Method "Il2CppScheduleOne.NPCs.NPCInventory" "GetCapacityForItem" @(
         "Il2CppScheduleOne.ItemFramework.ItemInstance"
     )
+    Assert-Method "Il2CppScheduleOne.NPCs.NPCInventory" "GetIdenticalItemAmount" @(
+        "Il2CppScheduleOne.ItemFramework.ItemInstance"
+    )
     Assert-Method "Il2CppScheduleOne.NPCs.NPCInventory" "InsertItem" @(
         "Il2CppScheduleOne.ItemFramework.ItemInstance",
         "System.Boolean"

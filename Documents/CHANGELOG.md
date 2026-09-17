@@ -7,6 +7,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Adhere
 - Restored saved station modes in the UI and routed unpacked loose product from `ProductSlot` through the station's existing transit route. Routing insight adapted from PR #2 by `ecrgr` without its obsolete pre-f13 APIs.
 - Updated f13 worker selection and move initialization so Packagers deliver loose product from unpack-mode stations to their selected storage destination.
 - Validated unpack transit routes and pickup amounts against `ProductSlot` instead of the vanilla packaged-item output slot.
+- Kept an unpack delivery route valid after pickup so a Packager can fill multiple inventory stacks and then walk them to the destination.
 ## [2.0.0] - 2025-08-11
 ### Added
 `Unpackage` - Packagers follow the pack/unpack controller of their assigned Packaging Stations

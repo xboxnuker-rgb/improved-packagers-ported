@@ -117,10 +117,19 @@ namespace ImprovedPackagers
                 return false;
             }
 
-            var product = station.ProductSlot?.ItemInstance;
-            if (product is null || station.ProductSlot.Quantity <= 0)
+            var sourceProduct = station.ProductSlot?.ItemInstance;
+            var product = sourceProduct ?? behaviour.itemToRetrieveTemplate;
+            if (product is null)
             {
-                invalidReason = "Unpacked ProductSlot is empty.";
+                invalidReason = "No unpacked or carried product is available.";
+                return false;
+            }
+
+            int sourceQuantity = sourceProduct is null ? 0 : station.ProductSlot.Quantity;
+            int carriedQuantity = behaviour.Npc?.Inventory?.GetIdenticalItemAmount(product) ?? 0;
+            if (sourceQuantity <= 0 && carriedQuantity <= 0)
+            {
+                invalidReason = "Unpacked ProductSlot is empty and the Packager carries no matching product.";
                 return false;
             }
 
@@ -137,8 +146,9 @@ namespace ImprovedPackagers
                 return false;
             }
 
-            if (behaviour.Npc?.Inventory is null ||
-                behaviour.Npc.Inventory.GetCapacityForItem(product) <= 0)
+            if (carriedQuantity <= 0 &&
+                (behaviour.Npc?.Inventory is null ||
+                 behaviour.Npc.Inventory.GetCapacityForItem(product) <= 0))
             {
                 invalidReason = "Packager inventory has no capacity for the unpacked product.";
                 return false;
