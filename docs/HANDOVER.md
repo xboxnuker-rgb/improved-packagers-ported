@@ -219,6 +219,16 @@ Candidate 12 adds an unpack-only placement implementation using f13's `ITransitE
 - Candidate 12 package SHA-256: `E9D7C778936C67F44065E4D743649B0B8C634805311A207D7284D7212D5071CE`
 - Candidate 12 Release build: zero warnings and zero errors; all required f13 signatures passed.
 
+Candidate 12 runtime result (reported after test): behavior remained identical. The worker reached the shelf and locked its slot but did not emit the custom deposit message, indicating the game rejected the destination before `PlaceItem()`.
+
+Candidate 13 overrides both f13 `MoveItemBehaviour.IsDestinationValid(TransitRoute, ItemInstance, ref string)` and `IsDestinationValid(TransitRoute, ItemInstance)` overloads for unpack routes, using the loose ProductSlot/carried-product validation before the explicit placement hook.
+
+- Candidate 13 source: `dbd11a3272e3d34d218955236d33aca48d0080ef`
+- Candidate 13 DLL SHA-256: `F9CA13FD01B7E87F8BB5CE84E5E46FB048DDE93449E4627459F4122FA09D24DE`
+- Candidate 13 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test13.zip`
+- Candidate 13 package SHA-256: `23CD9DD742475D15AC221DF1393C31612B66CF22BBEE2385E8BF610282D74117`
+- Candidate 13 Release build: zero warnings and zero errors; all required f13 signatures passed.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
