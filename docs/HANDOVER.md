@@ -194,6 +194,21 @@ Candidate 9 defers the custom pickup's `WalkToDestination()` call by one frame w
 - Candidate 9 package SHA-256: `103BD4EC65FB49D95A461EB0F324489E70496A1215D2141E540B6D8FBC5EBAA2`
 - Candidate 9 Release build: zero warnings and zero errors; all required f13 signatures passed.
 
+Candidate 9 log received as pasted text on 2026-09-17:
+
+- Pasted log SHA-256: `5F860C75D20472D0AC1848A7F877463426021AF9F5266D10742259DDEAC0016F`
+- The exact candidate 9 DLL SHA-256 `717E1CF5EB270B1B4ABA2C3D9A757654353B8E2F5143678216288E19F8C522A1` loaded on f13.
+- The worker still produced five 20-item pickup messages and never produced a delivery/recovery message.
+- Alex requested abandoning multi-stack carrying and matching the base-game one-stack trip behavior.
+
+Candidate 11 removes the batch loop. Each custom ProductSlot pickup takes only one inventory-sized stack, sets `grabbedAmount` to that stack, queues the destination transition, and leaves the worker to return for the next stack after placement.
+
+- Candidate 11 source: `dc6fa7da4c80742541d7b0418be8d4f37adf60eb`
+- Candidate 11 DLL SHA-256: `C9ED3D1CBD3EC42A0F007C1DB79873A4F1512FA6D496C09C925E76653061EBB0`
+- Candidate 11 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test11.zip`
+- Candidate 11 package SHA-256: `8E2019AE9DEE764834B46ABD3D9F99781EF0FE09441DBD7BA1571CCDB450DDD1`
+- Candidate 11 Release build: zero warnings and zero errors; all required f13 signatures passed.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
