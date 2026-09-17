@@ -92,6 +92,9 @@ try {
         "Il2CppScheduleOne.ObjectScripts.PackagingStation"
     )
     Assert-Method "Il2CppScheduleOne.UI.Stations.PackagingStationCanvas" "ToggleMode"
+    Assert-Method "Il2CppScheduleOne.UI.Stations.PackagingStationCanvas" "SetMode" @(
+        "Il2CppScheduleOne.ObjectScripts.PackagingStation/EMode"
+    )
     Assert-Property "Il2CppScheduleOne.UI.Stations.PackagingStationCanvas" "Station" "Il2CppScheduleOne.ObjectScripts.PackagingStation"
     Assert-Property "Il2CppScheduleOne.UI.Stations.PackagingStationCanvas" "CurrentMode" "Il2CppScheduleOne.ObjectScripts.PackagingStation/EMode"
 
@@ -100,6 +103,13 @@ try {
     )
     Assert-Method "Il2CppScheduleOne.ObjectScripts.PackagingStation" "Awake"
     Assert-Method "Il2CppScheduleOne.ObjectScripts.PackagingStation" "PackSingleInstance"
+    Assert-Method "Il2CppScheduleOne.ObjectScripts.PackagingStation" "Unpack"
+    Assert-Method "Il2CppScheduleOne.ObjectScripts.PackagingStation" "GetState" @(
+        "Il2CppScheduleOne.ObjectScripts.PackagingStation/EMode"
+    )
+    Assert-Property "Il2CppScheduleOne.ObjectScripts.PackagingStation" "ProductSlot" "Il2CppScheduleOne.ItemFramework.ItemSlot"
+    Assert-Property "Il2CppScheduleOne.ObjectScripts.PackagingStation" "OutputSlot" "Il2CppScheduleOne.ItemFramework.ItemSlot"
+    Assert-Property "Il2CppScheduleOne.ObjectScripts.PackagingStation" "OutputSlots" 'Il2CppSystem.Collections.Generic.List`1<Il2CppScheduleOne.ItemFramework.ItemSlot>'
     Assert-Method "Il2CppScheduleOne.ObjectScripts.PackagingStation" "SetNPCUser" @(
         "Il2CppFishNet.Object.NetworkObject"
     )

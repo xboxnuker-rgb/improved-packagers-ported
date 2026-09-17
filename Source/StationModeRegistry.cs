@@ -54,6 +54,8 @@ public static class StationModeRegistry
     {
         _explicit[station.GUID.ToString()] = (int)mode;
         _sticky.Remove(station.GUID.ToString());
+        ApplyTransitOutput(station, mode);
+        Save();
     }
 
     public static bool TryGetMode(PackagingStation station, out PackagingStation.EMode mode)
@@ -77,21 +79,44 @@ public static class StationModeRegistry
     {
         if (station is null) return;
         if (_explicit.TryGetValue(station.GUID.ToString(), out var m))
+        {
             _sticky[station.GUID.ToString()] = m;
+            ApplyTransitOutput(station, (PackagingStation.EMode)m);
+        }
     }
 
     public static void SetStickyIfNone(PackagingStation station, PackagingStation.EMode mode)
     {
         if (station is null) return;
         if (_explicit.ContainsKey(station.GUID.ToString())) return;
-        if (!_sticky .ContainsKey(station.GUID.ToString())) _sticky[station.GUID.ToString()] = (int)mode;
+        if (!_sticky.ContainsKey(station.GUID.ToString())) _sticky[station.GUID.ToString()] = (int)mode;
+        ApplyTransitOutput(station, mode);
     }
 
     public static void Remove(PackagingStation station)
     {
         if (station is null) return;
         _explicit.Remove(station.GUID.ToString());
-        _sticky  .Remove(station.GUID.ToString());
+        _sticky.Remove(station.GUID.ToString());
+        Save();
+    }
+
+    // PR #2 by ecrgr identified that loose product created by Unpack lives in
+    // ProductSlot, while vanilla worker transit reads the station's OutputSlots.
+    // Point the existing transit route at the slot for the selected mode rather
+    // than replacing the game's move-item behaviour with version-specific code.
+    public static void ApplyTransitOutput(PackagingStation station, PackagingStation.EMode mode)
+    {
+        if (station is null || station.OutputSlots is null) return;
+
+        var transitOutput = mode == PackagingStation.EMode.Unpackage
+            ? station.ProductSlot
+            : station.OutputSlot;
+
+        if (transitOutput is null) return;
+
+        station.OutputSlots.Clear();
+        station.OutputSlots.Add(transitOutput);
     }
 
     public static void ClearAll()

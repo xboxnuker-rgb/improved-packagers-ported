@@ -78,6 +78,19 @@ Received `Latest.log` from the full mod set on 2026-09-17.
 - The log contains an unrelated `DeliverySpotsPlus` coroutine exception and repeated `Worker Collision Reborn` missing-capsule messages.
 - The log alone cannot prove pack/unpack behavior, save/reload persistence, dock direction behavior, or registry cleanup when a station is destroyed.
 
+### Unpack workflow test candidate
+
+Alex subsequently observed that a worker removed packaged bricks from the station's vanilla `OutputSlot` instead of running unpack mode and transporting the resulting loose product. This reproduces the core routing defect described in upstream PR #2 by `ecrgr`.
+
+The f13 candidate selectively adapts that insight without taking PR #2's removed `Enable_Networked` overload or obsolete `MoveItemBehaviour.Initialize` calls:
+
+- Restore a saved mode through `PackagingStationCanvas.SetMode(EMode)` when the UI opens.
+- In unpack mode, expose `ProductSlot` through the station's existing transit `OutputSlots` list. In package mode, restore the vanilla `OutputSlot`.
+- Continue using the game's normal worker transit behavior, which also gives Harder Working Employees a common slot-level contract rather than competing worker-behavior patches.
+- Persist mode changes and station removal immediately.
+
+Static API verification and the Release build pass for this candidate. Runtime testing must compare Improved Packagers alone, then the same scenario with Harder Working Employees enabled. The received full-set log identifies Harder Working Employees `2.2.3` as tested against game `0.3.4f4`; do not change that mod unless the comparison proves it still bypasses the corrected station slots on f13.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.

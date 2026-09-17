@@ -31,6 +31,10 @@ namespace ImprovedPackagers
         static void Postfix(PackagingStationCanvas __instance, PackagingStation station)
         {
             if (__instance is null || station is null) return;
+
+            if (StationModeRegistry.TryGetMode(station, out var savedMode))
+                __instance.SetMode(savedMode);
+
             StationModeRegistry.SetExplicit(station, __instance.CurrentMode);
         }
     }
