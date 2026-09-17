@@ -229,6 +229,14 @@ Candidate 13 overrides both f13 `MoveItemBehaviour.IsDestinationValid(TransitRou
 - Candidate 13 package SHA-256: `23CD9DD742475D15AC221DF1393C31612B66CF22BBEE2385E8BF610282D74117`
 - Candidate 13 Release build: zero warnings and zero errors; all required f13 signatures passed.
 
+Alex additionally reported that the worker does not recognize an unpack-mode Packaging Station as a fillable destination for loading bricks/jars/baggies before breakdown. Candidate 14 addresses that separate input-side gap by overriding `PackagingStation.IsAcceptingItems` for an empty unpack-mode `PackagingSlot`, while retaining package-mode behavior and the one-stack ProductSlot delivery path.
+
+- Candidate 14 source: `89f3c6240f0204e26759f8b98ac011bdfa885af2`
+- Candidate 14 DLL SHA-256: `F9F022B03F6A9A6D3287705F05DC9E70BB10D95BE55003E315B0AFA2B1863E16`
+- Candidate 14 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test14.zip`
+- Candidate 14 package SHA-256: `A9539AF7A16A5807E70EDFCB0BFF30FFAF5FE646A9470DF290BE21DB84964FDF`
+- Candidate 14 Release build: zero warnings and zero errors; all required f13 signatures passed.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
