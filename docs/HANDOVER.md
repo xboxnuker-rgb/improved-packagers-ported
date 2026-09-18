@@ -2,20 +2,20 @@
 
 ## Schedule I 0.4.6f13 IL2CPP compatibility port
 
-- Status: `AWAITING_TEST19_DIAGNOSTIC_RUNTIME`
+- Status: `AWAITING_TEST20_INLINE_INIT_RUNTIME`
 - Maintained repository: `https://github.com/xboxnuker-rgb/improved-packagers-ported`
 - Merge target: `main`
 - Branch: `fix/test19-runtime-trace`
 - Base: upstream `master` at `4519a1f48e3f461aa78681bb5a48bd683e2b6962`
-- Current compatibility implementation: `0a0767d2a60bd9ad3e44d6e0efd378ff87cd53df`
+- Current compatibility implementation: `d8835d23e2a292590a08c393181aa65463375b40`
 
 ### Alex: continue from here
 
-1. Continue from `fix/test19-runtime-trace`; candidate 19 is a diagnostic build of candidate 18, not a speculative transfer rewrite.
-2. Install `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test19-diagnostic.zip` only after Schedule I is closed.
-3. Test the stalled unpack station with Harder Working Employees disabled first. Confirm the log contains `Compatibility build f13-diagnostic-r3 loaded.` and capture all `[Trace]` lines from worker selection through the stall.
-4. Do not spend another cycle testing delivery until the trace identifies whether the stop is station readiness, ownership, arrival, or `BeginPackaging`.
-5. Repeat with Harder Working Employees only after the isolated station operation advances. Do not publish a fork release or update the upstream pull request without fresh approval.
+1. Continue from `fix/test19-runtime-trace`; candidate 20 bridges the loose product into f13's inlined move initialization while preserving the vanilla move behavior.
+2. Install `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test20-inline-init.zip` only after Schedule I is closed.
+3. Test one unpack-and-deliver cycle with Harder Working Employees disabled. Confirm the log contains `Compatibility build f13-inline-init-r4 loaded.` followed by `[Trace] MoveItemBehaviour.Initialize product bridge`.
+4. Verify that the worker removes loose product from `ProductSlot`, walks to the configured destination, deposits it, then returns for subsequent stacks/cycles.
+5. Repeat with Harder Working Employees only after the isolated route passes. Do not publish a fork release or update the upstream pull request without fresh approval.
 
 Never commit Schedule I, MelonLoader, generated interop, save, log, or packaged artifact files. Local build commands and reference layout are in `README.md`.
 
@@ -341,7 +341,24 @@ Candidate 19 retains candidate 18 behavior and adds state-change-only diagnostic
 - Release build: zero warnings and zero errors with .NET SDK `8.0.425`.
 - Static API and Harmony parameter-name verification: all required signatures passed against `Assembly-CSharp.dll` SHA-256 `0D2EB364F3E84120AF7CCC9FA6BAFD597D42D495EBACC3A260CB4CA0CF0513DA`.
 - Compiled assembly inspection confirms version `2.0.1.0`, build identity `f13-diagnostic-r3`, and the diagnostic hook strings.
-- Live-game verification: pending the isolated HWE-disabled stalled-station reproduction.
+- Live-game result: with HWE disabled, the worker completed one unpack operation and then stopped without delivery. The trace proves `PackSingleInstance()` redirected to `Unpack()`, `ProductSlot` increased from 0 to 20, and the packaged `OutputSlot` decreased from 20 to 19. `GetStationMoveItems()` then selected that exact station, but the `StartMoveItem` patch never ran.
+- Test 19 log: `26-9-19_0-5-33.log`, SHA-256 `7F4A1761DD7CA716CF07CD09EE0F4E97ACEE84D7E513C4E4BE0554B5A900CD43`.
+
+### Inlined move initialization and candidate 20
+
+The Test 19 trace isolated a native compiler detail that earlier source-level reasoning missed. In f13, `Packager.UpdateBehaviour()` calls `GetStationMoveItems()` but then contains the body of `StartMoveItem(PackagingStation)` inline. It directly reads native station offset `+808` (`OutputSlot`) and calls `MoveItemBehaviour.Initialize(...)`; it does not invoke the patchable `StartMoveItem` method. Therefore the selection postfix correctly returned the unpack station, but the inlined code still initialized movement with the packaged item instead of the loose `ProductSlot` item.
+
+Candidate 20 patches the exact non-inlined boundary that f13 still calls: `MoveItemBehaviour.Initialize(TransitRoute route, ItemInstance _itemToRetrieveTemplate, int _maxMoveAmount, bool _skipPickup)`. When and only when `route.Source` is an unpack-mode Packaging Station containing loose product, the prefix replaces `_itemToRetrieveTemplate` with `ProductSlot.ItemInstance`. The existing `OutputSlots` bridge already exposes `ProductSlot`, so f13 continues through its own pickup, inventory, reservation, walk, placement, lock cleanup, and behavior shutdown code.
+
+- Candidate 20 source: `d8835d23e2a292590a08c393181aa65463375b40`
+- Build identity: `f13-inline-init-r4`
+- Candidate DLL SHA-256: `52782B7C97B81D95D05F7C3FBF8D01C7DD568E27B5655E27B3D95678522F2EF7`
+- Candidate package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test20-inline-init.zip`
+- Candidate package SHA-256: `38791D47D46D543AA4401F24A4C6C0BCC92AB5C8625FBE810BEF9D025209AF9D`
+- Release build: zero warnings and zero errors with .NET SDK `8.0.425`.
+- Static API verification now checks the exact four `Initialize` parameter names and the `TransitRoute.Source` property; all required f13 signatures passed.
+- Compiled assembly inspection confirms version `2.0.1.0`, build identity `f13-inline-init-r4`, and the product-bridge trace string.
+- Live-game verification: pending the isolated HWE-disabled unpack-and-deliver cycle.
 
 ### Pull request handoff
 
