@@ -110,6 +110,13 @@ try {
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.PackagingStationBehaviour" "IsStationReady" @(
         "Il2CppScheduleOne.ObjectScripts.PackagingStation"
     ) @("station")
+    Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.PackagingStationBehaviour" "OnActiveTick"
+    Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.PackagingStationBehaviour" "StartPackaging"
+    Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.PackagingStationBehaviour" "BeginPackaging"
+    Assert-Method "Il2CppScheduleOne.Employees.Packager" "GetStationToAttend"
+    Assert-Method "Il2CppScheduleOne.Employees.Packager" "StartPackaging" @(
+        "Il2CppScheduleOne.ObjectScripts.PackagingStation"
+    ) @("station")
     Assert-Method "Il2CppScheduleOne.Employees.Packager" "GetStationMoveItems"
     Assert-Method "Il2CppScheduleOne.Employees.Packager" "StartMoveItem" @(
         "Il2CppScheduleOne.ObjectScripts.PackagingStation"

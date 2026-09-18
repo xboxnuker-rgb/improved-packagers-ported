@@ -130,9 +130,13 @@ namespace ImprovedPackagers
             if (station is null) { __result = false; return false; }
 
             var mode = StationModeRegistry.ResolveForWork(station);
+            var packageState = station.GetState(PackagingStation.EMode.Package);
+            var unpackageState = station.GetState(PackagingStation.EMode.Unpackage);
+            var selectedState = mode == PackagingStation.EMode.Unpackage ? unpackageState : packageState;
 
-            if (station.GetState(mode) != PackagingStation.EState.CanBegin)
+            if (selectedState != PackagingStation.EState.CanBegin)
             {
+                RuntimeTrace.StationReady(__instance, station, mode, packageState, unpackageState, selectedState, "state-not-ready");
                 __result = false;
                 return false;
             }
@@ -143,6 +147,7 @@ namespace ImprovedPackagers
 #endif
             if (!(usable is null) && usable.IsInUse && station.NPCUserObject != __instance.Npc.NetworkObject)
             {
+                RuntimeTrace.StationReady(__instance, station, mode, packageState, unpackageState, selectedState, "owned-by-other-user");
                 __result = false;
                 return false;
             }
@@ -153,8 +158,38 @@ namespace ImprovedPackagers
             Vector3 driveTo = NavMesh.SamplePosition(desired, out var hit, 0.6f, NavMesh.AllAreas) ? hit.position : desired;
 
             __result = __instance.Npc.Movement.CanGetTo(station.StandPoint.position);
+            RuntimeTrace.StationReady(
+                __instance,
+                station,
+                mode,
+                packageState,
+                unpackageState,
+                selectedState,
+                __result ? "ready" : "navigation-unreachable");
             return false;
         }
+    }
+
+    [HarmonyPatch(typeof(PackagingStationBehaviour), nameof(PackagingStationBehaviour.OnActiveTick))]
+    static class PSBehaviourOnActiveTickTracePatch
+    {
+        static void Prefix(PackagingStationBehaviour __instance) => RuntimeTrace.BehaviourTick(__instance);
+    }
+
+    [HarmonyPatch(typeof(PackagingStationBehaviour), nameof(PackagingStationBehaviour.StartPackaging))]
+    static class PSBehaviourStartPackagingTracePatch
+    {
+        static void Prefix(PackagingStationBehaviour __instance) =>
+            RuntimeTrace.Hook("PackagingBehaviour.StartPackaging", __instance?.Station,
+                $"packagingInProgress={__instance?.PackagingInProgress}");
+    }
+
+    [HarmonyPatch(typeof(PackagingStationBehaviour), nameof(PackagingStationBehaviour.BeginPackaging))]
+    static class PSBehaviourBeginPackagingTracePatch
+    {
+        static void Prefix(PackagingStationBehaviour __instance) =>
+            RuntimeTrace.Hook("PackagingBehaviour.BeginPackaging", __instance?.Station,
+                $"packagingInProgress={__instance?.PackagingInProgress}");
     }
 
     /*
@@ -216,6 +251,7 @@ namespace ImprovedPackagers
             if (__instance is null || __instance.NPCUserObject is null) return true;
 
             var mode = StationModeRegistry.ResolveForWork(__instance);
+            RuntimeTrace.Hook("PackagingStation.PackSingleInstance", __instance, $"mode={mode}");
 
             if (InstanceFinder.IsServer && mode == PackagingStation.EMode.Unpackage)
             {
@@ -223,6 +259,29 @@ namespace ImprovedPackagers
                 return false;
             }
             return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(PackagingStation), nameof(PackagingStation.Unpack))]
+    static class PackagingStationUnpackTracePatch
+    {
+        static void Prefix(PackagingStation __instance) => RuntimeTrace.Hook("PackagingStation.Unpack", __instance);
+    }
+
+    [HarmonyPatch(typeof(Packager), "GetStationToAttend", new System.Type[] { })]
+    static class PackagerGetStationToAttendTracePatch
+    {
+        static void Postfix(Packager __instance, PackagingStation __result) =>
+            RuntimeTrace.PackagerSelection("Packager.GetStationToAttend", __instance, __result);
+    }
+
+    [HarmonyPatch(typeof(Packager), "StartPackaging", new[] { typeof(PackagingStation) })]
+    static class PackagerStartPackagingTracePatch
+    {
+        static void Prefix(Packager __instance, PackagingStation station)
+        {
+            RuntimeTrace.PackagerSelection("Packager.StartPackaging", __instance, station);
+            RuntimeTrace.Hook("Packager.StartPackaging", station);
         }
     }
 
@@ -277,6 +336,15 @@ namespace ImprovedPackagers
         }
     }
 
+    [HarmonyPatch(typeof(Packager), "GetStationMoveItems", new System.Type[] { })]
+    static class PackagerGetStationMoveItemsTracePatch
+    {
+        [HarmonyPostfix]
+        [HarmonyPriority(Priority.Last)]
+        static void Postfix(Packager __instance, PackagingStation __result) =>
+            RuntimeTrace.PackagerSelection("Packager.GetStationMoveItems", __instance, __result);
+    }
+
     [HarmonyPatch(typeof(Packager), "StartMoveItem", new[] { typeof(PackagingStation) })]
     static class PackagerStartMoveItemPatch
     {
@@ -290,8 +358,11 @@ namespace ImprovedPackagers
             try
             {
                 StationModeRegistry.ApplyTransitOutput(station, mode);
-                if (!UnpackTransitRouting.HasValidProductRoute(__instance, station))
+                if (!UnpackTransitRouting.HasValidProductRoute(__instance, station, out var invalidReason))
+                {
+                    RuntimeTrace.Hook("Packager.StartMoveItem rejected", station, $"reason={invalidReason}");
                     return false;
+                }
 
                 var route = UnpackTransitRouting.GetConfiguration(station).DestinationRoute;
                 var product = station.ProductSlot.ItemInstance;
@@ -319,6 +390,7 @@ namespace ImprovedPackagers
     {
         static void Postfix(PackagingStation __instance, NetworkObject npcObject)
         {
+            RuntimeTrace.StationUser(__instance, npcObject);
             if (__instance is null || npcObject is null) return;
             StationModeRegistry.ResolveForWork(__instance);
         }
