@@ -362,6 +362,15 @@ Candidate 20 patches the exact non-inlined boundary that f13 still calls: `MoveI
 - Passing isolated log: `26-9-19_0-29-15.log`/`Latest.log`, SHA-256 `FA2EE6A16CE3A81C2D7A1FF2FA04AF34EFD577522855E5F23ED5C5B07137DC62`.
 - HWE compatibility verification: pending. Installed Harder Working Employees was re-enabled after the isolated pass; DLL SHA-256 `937051445C63675EA4D13619911F388AA841D657D403446FA3E7E75FD75CBD87`.
 
+### Post-verification log banner (next version only)
+
+Do not alter the Test 20 runtime candidate while HWE compatibility is being verified. After the functional build passes, add a startup-log banner inspired by the compact block-art presentation shown in BFG Smart Deal Location, without copying its lettering. The intended layout is:
+
+- `STAYING PORTED BY` as the small heading.
+- A large block-letter `GSVS` mark below/left.
+- Improved Packagers name/version, target Schedule I version, compatibility build identity, and upstream/port attribution aligned on the right.
+- Keep the banner readable in both the live MelonLoader console and plain-text `Latest.log`; emit it once at startup and do not add per-frame noise.
+
 ### Pull request handoff
 
 Keep the pull request in draft while runtime results are pending. Add the isolated and full-set log conclusions here and to the PR, then mark it ready for upstream review. Do not merge upstream or publish a fork release without fresh approval.
