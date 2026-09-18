@@ -2,7 +2,7 @@
 
 ## Schedule I 0.4.6f13 IL2CPP compatibility port
 
-- Status: `AWAITING_TEST20_INLINE_INIT_RUNTIME`
+- Status: `AWAITING_TEST20_HWE_RUNTIME`
 - Maintained repository: `https://github.com/xboxnuker-rgb/improved-packagers-ported`
 - Merge target: `main`
 - Branch: `fix/test19-runtime-trace`
@@ -11,11 +11,11 @@
 
 ### Alex: continue from here
 
-1. Continue from `fix/test19-runtime-trace`; candidate 20 bridges the loose product into f13's inlined move initialization while preserving the vanilla move behavior.
-2. Install `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test20-inline-init.zip` only after Schedule I is closed.
-3. Test one unpack-and-deliver cycle with Harder Working Employees disabled. Confirm the log contains `Compatibility build f13-inline-init-r4 loaded.` followed by `[Trace] MoveItemBehaviour.Initialize product bridge`.
-4. Verify that the worker removes loose product from `ProductSlot`, walks to the configured destination, deposits it, then returns for subsequent stacks/cycles.
-5. Repeat with Harder Working Employees only after the isolated route passes. Do not publish a fork release or update the upstream pull request without fresh approval.
+1. Continue from `fix/test19-runtime-trace`; candidate 20 is installed and its isolated HWE-disabled unpack-and-deliver test passed.
+2. Harder Working Employees has been re-enabled for the compatibility run. Confirm the log contains both `Compatibility build f13-inline-init-r4 loaded.` and HWE's load identity.
+3. Verify that the worker repeatedly unpacks, removes loose product from `ProductSlot`, walks to the configured destination, deposits it, and returns for subsequent cycles.
+4. Close the game and compare the HWE-enabled trace with the isolated passing log.
+5. Do not publish a fork release or update the upstream pull request without fresh approval.
 
 Never commit Schedule I, MelonLoader, generated interop, save, log, or packaged artifact files. Local build commands and reference layout are in `README.md`.
 
@@ -358,7 +358,9 @@ Candidate 20 patches the exact non-inlined boundary that f13 still calls: `MoveI
 - Release build: zero warnings and zero errors with .NET SDK `8.0.425`.
 - Static API verification now checks the exact four `Initialize` parameter names and the `TransitRoute.Source` property; all required f13 signatures passed.
 - Compiled assembly inspection confirms version `2.0.1.0`, build identity `f13-inline-init-r4`, and the product-bridge trace string.
-- Live-game verification: pending the isolated HWE-disabled unpack-and-deliver cycle.
+- Isolated live-game result: **PASS** with Harder Working Employees disabled. The worker delivered the 20 loose product left by Test 19, returned, completed further unpack operations, and initialized later deliveries through the product bridge. The packaged output count fell from 19 through 14 during the observed run, with repeated `PackSingleInstance`, `Unpack`, station-selection, and product-bridge traces.
+- Passing isolated log: `26-9-19_0-29-15.log`/`Latest.log`, SHA-256 `FA2EE6A16CE3A81C2D7A1FF2FA04AF34EFD577522855E5F23ED5C5B07137DC62`.
+- HWE compatibility verification: pending. Installed Harder Working Employees was re-enabled after the isolated pass; DLL SHA-256 `937051445C63675EA4D13619911F388AA841D657D403446FA3E7E75FD75CBD87`.
 
 ### Pull request handoff
 
