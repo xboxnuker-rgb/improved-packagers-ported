@@ -2,20 +2,20 @@
 
 ## Schedule I 0.4.6f13 IL2CPP compatibility port
 
-- Status: `AWAITING_TEST18_RUNTIME_VERIFICATION`
+- Status: `AWAITING_TEST19_DIAGNOSTIC_RUNTIME`
 - Maintained repository: `https://github.com/xboxnuker-rgb/improved-packagers-ported`
 - Merge target: `main`
-- Branch: `fix/schedule-i-0.4.6f13-compat`
+- Branch: `fix/test19-runtime-trace`
 - Base: upstream `master` at `4519a1f48e3f461aa78681bb5a48bd683e2b6962`
-- Current compatibility implementation: `f36e4f81876c0b53787d35383f206e448f2809f8`
+- Current compatibility implementation: `0a0767d2a60bd9ad3e44d6e0efd378ff87cd53df`
 
 ### Alex: continue from here
 
-1. Pull `main` from `xboxnuker-rgb/improved-packagers-ported`; all source and investigation history is retained there.
-2. Runtime-test the published [2.0.1 Test 18 Alpha prerelease](https://github.com/xboxnuker-rgb/improved-packagers-ported/releases/tag/v2.0.1-test18-alpha). The ZIP is attached to the release rather than committed to the source tree.
-3. Confirm the log contains `Compatibility build f13-native-transit-r2 loaded.` and then either `Packaging Station mode inferred as Unpackage from its ready state.` or an explicit station-mode line.
-4. Verify output delivery and packaged input loading with Harder Working Employees disabled first, then enabled.
-5. Add the resulting log conclusion and hashes to this handover. If both routes pass, replace the pending status above and prepare the upstream pull request from `fix/schedule-i-0.4.6f13-compat`.
+1. Continue from `fix/test19-runtime-trace`; candidate 19 is a diagnostic build of candidate 18, not a speculative transfer rewrite.
+2. Install `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test19-diagnostic.zip` only after Schedule I is closed.
+3. Test the stalled unpack station with Harder Working Employees disabled first. Confirm the log contains `Compatibility build f13-diagnostic-r3 loaded.` and capture all `[Trace]` lines from worker selection through the stall.
+4. Do not spend another cycle testing delivery until the trace identifies whether the stop is station readiness, ownership, arrival, or `BeginPackaging`.
+5. Repeat with Harder Working Employees only after the isolated station operation advances. Do not publish a fork release or update the upstream pull request without fresh approval.
 
 Never commit Schedule I, MelonLoader, generated interop, save, log, or packaged artifact files. Local build commands and reference layout are in `README.md`.
 
@@ -323,7 +323,25 @@ The API verifier now optionally checks parameter names as well as parameter type
 - Release URL: `https://github.com/xboxnuker-rgb/improved-packagers-ported/releases/tag/v2.0.1-test18-alpha`
 - Release build: zero warnings and zero errors.
 - Static API and Harmony parameter-name verification: passed against the supplied f13 interop assembly.
-- Live-game verification: pending.
+- Live-game result: failed before the station operation. With Harder Working Employees disabled, Alex observed the assigned worker standing at the Packaging Station without operating it. This is earlier than the older candidates that unpacked, filled the worker inventory, and then failed to deposit.
+- The two HWE-free candidate-18 startup logs (`26-9-18_13-17-36.log`, SHA-256 `598D3257CD3F6BA95A2A9813E01B079E2DF26EDE0B89E3994624C68AF7EB5A2C`; and `26-9-18_13-24-58.log`, SHA-256 `46350019E7826522E2051EEF1C642A879A2F7CA1EAF7D9DEACA0C678C8EC13D7`) confirm `f13-native-transit-r2` loaded without an Improved Packagers Harmony exception. Neither records a station-mode line or the game's `Starting packaging`/`Packaging done!` messages. Later sessions contain Harder Working Employees and must not be treated as isolated evidence.
+
+### Native station-operation trace and candidate 19
+
+Fresh Cpp2IL inspection of the exact f13 native binary established the station-operation chain: `Packager.GetStationToAttend()` selects a station, `Packager.StartPackaging()` enables `PackagingStationBehaviour`, readiness and arrival gates lead to `BeginPackaging()`, and only the completed work calls `PackagingStation.PackSingleInstance()`. Improved Packagers replaces that final call with `Unpack()` in Unpackage mode. Because candidate 18 stopped with the worker at the bench, the remaining failure is before `PackSingleInstance()`, not in the transfer/deposit code exercised by candidates 4-15.
+
+Candidate 19 retains candidate 18 behavior and adds state-change-only diagnostics around that native chain. The trace reports station selection, both Package and Unpackage readiness states, ownership/in-use rejection, navigation reachability, active behavior movement/arrival state, `StartPackaging`, `BeginPackaging`, `PackSingleInstance`, `Unpack`, move-item selection/rejection, and the three native station slots. Repeated identical ticks are deduplicated to avoid another multi-megabyte blind log.
+
+- Candidate 19 source: `0a0767d2a60bd9ad3e44d6e0efd378ff87cd53df`
+- Build identity: `f13-diagnostic-r3`
+- Candidate DLL SHA-256: `66F8498E54D3646A755791742FD35C0297E50E27DD71CD1786502E11E7B0C9C7`
+- Candidate package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test19-diagnostic.zip`
+- Candidate package SHA-256: `688B28B859C313B50C2546CA34E9F31F37EEB5C031B1B8926931D39FD11A2618`
+- Package contents: one root-level `ImprovedPackagers.dll`; no game, loader, Harmony, Unity, or interop dependency.
+- Release build: zero warnings and zero errors with .NET SDK `8.0.425`.
+- Static API and Harmony parameter-name verification: all required signatures passed against `Assembly-CSharp.dll` SHA-256 `0D2EB364F3E84120AF7CCC9FA6BAFD597D42D495EBACC3A260CB4CA0CF0513DA`.
+- Compiled assembly inspection confirms version `2.0.1.0`, build identity `f13-diagnostic-r3`, and the diagnostic hook strings.
+- Live-game verification: pending the isolated HWE-disabled stalled-station reproduction.
 
 ### Pull request handoff
 
