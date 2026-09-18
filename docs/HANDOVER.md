@@ -2,20 +2,20 @@
 
 ## Schedule I 0.4.6f13 IL2CPP compatibility port
 
-- Status: `AWAITING_TEST20_HWE_RUNTIME`
+- Status: `AWAITING_NEXUS_RC1_PLAYTEST`
 - Maintained repository: `https://github.com/xboxnuker-rgb/improved-packagers-ported`
 - Merge target: `main`
 - Branch: `fix/test19-runtime-trace`
 - Base: upstream `master` at `4519a1f48e3f461aa78681bb5a48bd683e2b6962`
-- Current compatibility implementation: `d8835d23e2a292590a08c393181aa65463375b40`
+- Current compatibility implementation: `3673233bc7255b40d301ff03e248c76cd5b9614c`
 
 ### Alex: continue from here
 
-1. Continue from `fix/test19-runtime-trace`; candidate 20 is installed and its isolated HWE-disabled unpack-and-deliver test passed.
-2. Harder Working Employees has been re-enabled for the compatibility run. Confirm the log contains both `Compatibility build f13-inline-init-r4 loaded.` and HWE's load identity.
-3. Verify that the worker repeatedly unpacks, removes loose product from `ProductSlot`, walks to the configured destination, deposits it, and returns for subsequent cycles.
-4. Close the game and compare the HWE-enabled trace with the isolated passing log.
-5. Do not publish a fork release or update the upstream pull request without fresh approval.
+1. Continue from `fix/test19-runtime-trace`; candidate 20 passed both isolated and HWE-enabled runtime tests.
+2. Nexus RC1 adds only the one-time GSVS startup banner and a distinct `f13-nexus-rc1` build identity; the passing worker logic is unchanged.
+3. Playtest the installed RC with the normal mod set. Confirm the banner is aligned/readable and unpack delivery remains stable across a longer session and save/reload.
+4. Close the game and record the final RC log/hash before preparing the Nexus Mods package or changing repository/release state.
+5. Do not publish, push, or update the upstream pull request without fresh approval.
 
 Never commit Schedule I, MelonLoader, generated interop, save, log, or packaged artifact files. Local build commands and reference layout are in `README.md`.
 
@@ -360,16 +360,23 @@ Candidate 20 patches the exact non-inlined boundary that f13 still calls: `MoveI
 - Compiled assembly inspection confirms version `2.0.1.0`, build identity `f13-inline-init-r4`, and the product-bridge trace string.
 - Isolated live-game result: **PASS** with Harder Working Employees disabled. The worker delivered the 20 loose product left by Test 19, returned, completed further unpack operations, and initialized later deliveries through the product bridge. The packaged output count fell from 19 through 14 during the observed run, with repeated `PackSingleInstance`, `Unpack`, station-selection, and product-bridge traces.
 - Passing isolated log: `26-9-19_0-29-15.log`/`Latest.log`, SHA-256 `FA2EE6A16CE3A81C2D7A1FF2FA04AF34EFD577522855E5F23ED5C5B07137DC62`.
-- HWE compatibility verification: pending. Installed Harder Working Employees was re-enabled after the isolated pass; DLL SHA-256 `937051445C63675EA4D13619911F388AA841D657D403446FA3E7E75FD75CBD87`.
+- HWE compatibility result: **PASS** with Harder Working Employees `2.2.3` active. The trace records repeated unpack operations, `ProductSlot` station selections, and product-bridge initialization while HWE's behavior monitor and move-item hooks were active. No Improved Packagers Harmony, undefined-target, or product-bridge error appeared.
+- Passing HWE-enabled log: `26-9-19_0-35-54.log`/`Latest.log`, SHA-256 `C0C5F511C30FD143433AB969EE4FA45D15D695522408D123EF447213A44BE1E6`.
+- Tested HWE DLL SHA-256: `937051445C63675EA4D13619911F388AA841D657D403446FA3E7E75FD75CBD87`.
 
-### Post-verification log banner (next version only)
+### Nexus RC1 presentation build
 
-Do not alter the Test 20 runtime candidate while HWE compatibility is being verified. After the functional build passes, add a startup-log banner inspired by the compact block-art presentation shown in BFG Smart Deal Location, without copying its lettering. The intended layout is:
+The first Nexus release candidate keeps candidate 20's tested runtime logic unchanged. It adds a one-time green startup banner with `STAYING PORTED BY` above a block-letter `GSVS`, plus the mod version, f13/IL2CPP target, build identity, original-author credit, and port-maintainer credit. The normal compatibility identity line remains after the banner for machine-readable log checks.
 
-- `STAYING PORTED BY` as the small heading.
-- A large block-letter `GSVS` mark below/left.
-- Improved Packagers name/version, target Schedule I version, compatibility build identity, and upstream/port attribution aligned on the right.
-- Keep the banner readable in both the live MelonLoader console and plain-text `Latest.log`; emit it once at startup and do not add per-frame noise.
+- RC source: `3673233bc7255b40d301ff03e248c76cd5b9614c`
+- Build identity: `f13-nexus-rc1`
+- RC DLL SHA-256: `490BC63B9053397770E7D96410513062798BB23F89E36F9223DBE7733105FB05`
+- RC package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-nexus-rc1.zip`
+- RC package SHA-256: `5960A593159D02E36BFBE4AC5D55A4D3CBDF4CBBB691A6C94C731CB8A2A7CE45`
+- Package contents: one root-level `ImprovedPackagers.dll`; no copied game, loader, Harmony, Unity, interop, log, or save files.
+- Release build: zero warnings and zero errors; all exact f13 API and Harmony parameter-name checks passed.
+- Compiled assembly inspection confirms version `2.0.1.0`, `f13-nexus-rc1`, and all requested banner/attribution text.
+- Live-game verification: pending the normal-mod-set banner and extended-playtest check.
 
 ### Pull request handoff
 
