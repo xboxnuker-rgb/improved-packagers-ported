@@ -18,7 +18,7 @@ namespace ImprovedPackagers
         public const string ModName = "Improved Packagers";
         public const string Version = "2.0.1";
         public const string ModDesc = "Enables Packagers to unpack product at Packaging Stations, and load vehicles parked in Loading Bays";
-        public const string BuildIdentity = "f13-inline-init-r4";
+        public const string BuildIdentity = "f13-nexus-rc1";
 
         private MelonPreferences_Category PropertyGroup;
 #if Il2Cpp
@@ -34,6 +34,7 @@ namespace ImprovedPackagers
         {
             ReflectionHelper.Initialize();
             StationModeRegistry.Load();
+            StartupBanner.Print();
             MelonLogger.Msg($"Compatibility build {BuildIdentity} loaded.");
         }
 
