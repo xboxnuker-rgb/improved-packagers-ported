@@ -50,6 +50,15 @@ namespace ImprovedPackagers
 #endif
         }
 
+        public static PackagingStation GetSourceStation(TransitRoute route)
+        {
+#if Il2Cpp
+            return (route?.Source as Il2CppObjectBase)?.TryCast<PackagingStation>();
+#elif Mono
+            return route?.Source as PackagingStation;
+#endif
+        }
+
         public static bool HasValidProductRoute(Packager packager, PackagingStation station)
             => HasValidProductRoute(packager, station, out _);
 
@@ -344,6 +353,39 @@ namespace ImprovedPackagers
         static void Postfix(Packager __instance, PackagingStation __result) =>
             RuntimeTrace.PackagerSelection("Packager.GetStationMoveItems", __instance, __result);
     }
+
+#if Il2Cpp
+    [HarmonyPatch(
+        typeof(MoveItemBehaviour),
+        nameof(MoveItemBehaviour.Initialize),
+        new[] { typeof(TransitRoute), typeof(ItemInstance), typeof(int), typeof(bool) })]
+    static class MoveItemBehaviourInitializePatch
+    {
+        static void Prefix(TransitRoute route, ref ItemInstance _itemToRetrieveTemplate)
+        {
+            try
+            {
+                var station = UnpackTransitRouting.GetSourceStation(route);
+                if (station is null ||
+                    !StationModeRegistry.TryGetMode(station, out var mode) ||
+                    mode != PackagingStation.EMode.Unpackage ||
+                    station.ProductSlot?.ItemInstance is null ||
+                    station.ProductSlot.Quantity <= 0)
+                    return;
+
+                _itemToRetrieveTemplate = station.ProductSlot.ItemInstance;
+                RuntimeTrace.Hook(
+                    "MoveItemBehaviour.Initialize product bridge",
+                    station,
+                    "template=ProductSlot");
+            }
+            catch (System.Exception ex)
+            {
+                MelonLogger.Error($"Failed to bridge unpacked product into vanilla move initialization: {ex}");
+            }
+        }
+    }
+#endif
 
     [HarmonyPatch(typeof(Packager), "StartMoveItem", new[] { typeof(PackagingStation) })]
     static class PackagerStartMoveItemPatch

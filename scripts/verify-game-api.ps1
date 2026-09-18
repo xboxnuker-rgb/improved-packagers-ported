@@ -168,7 +168,8 @@ try {
         "Il2CppScheduleOne.ItemFramework.ItemInstance",
         "System.Int32",
         "System.Boolean"
-    )
+    ) @("route", "_itemToRetrieveTemplate", "_maxMoveAmount", "_skipPickup")
+    Assert-Property "Il2CppScheduleOne.Management.TransitRoute" "Source" "Il2CppScheduleOne.Management.ITransitEntity"
     Assert-Method "Il2CppScheduleOne.NPCs.Behaviour.Behaviour" "Enable_Networked"
     Assert-Method "Il2CppScheduleOne.Management.ITransitEntity" "GetInputCapacityForItem" @(
         "Il2CppScheduleOne.ItemFramework.ItemInstance",
