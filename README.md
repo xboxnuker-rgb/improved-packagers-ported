@@ -4,6 +4,7 @@ Improved Packagers lets Packagers follow each Packaging Station's pack or unpack
 
 - **Requires:** [MelonLoader](https://melonwiki.xyz/#/)
 - **Recommended:** [Mod Manager & Phone App](https://www.nexusmods.com/schedule1/mods/397)
+- **Current test build:** [2.0.1 Test 18 Alpha](https://github.com/xboxnuker-rgb/improved-packagers-ported/releases/tag/v2.0.1-test18-alpha) — prerelease; runtime verification is still in progress.
 
 ## Compatibility
 

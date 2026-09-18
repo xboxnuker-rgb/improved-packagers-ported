@@ -12,7 +12,7 @@
 ### Alex: continue from here
 
 1. Pull `main` from `xboxnuker-rgb/improved-packagers-ported`; all source and investigation history is retained there.
-2. Runtime-test `ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test18.zip`, which is deliberately not committed because build artifacts are excluded from source control.
+2. Runtime-test the published [2.0.1 Test 18 Alpha prerelease](https://github.com/xboxnuker-rgb/improved-packagers-ported/releases/tag/v2.0.1-test18-alpha). The ZIP is attached to the release rather than committed to the source tree.
 3. Confirm the log contains `Compatibility build f13-native-transit-r2 loaded.` and then either `Packaging Station mode inferred as Unpackage from its ready state.` or an explicit station-mode line.
 4. Verify output delivery and packaged input loading with Harder Working Employees disabled first, then enabled.
 5. Add the resulting log conclusion and hashes to this handover. If both routes pass, replace the pending status above and prepare the upstream pull request from `fix/schedule-i-0.4.6f13-compat`.
@@ -319,6 +319,8 @@ The API verifier now optionally checks parameter names as well as parameter type
 - Candidate 18 DLL SHA-256: `0A6FD0C2DC70460C7226ED0FE462CCEDD80485EEED6602512DA4C51CA658F611`
 - Candidate 18 package: `artifacts/ImprovedPackagers-2.0.1-il2cpp-schedule-i-0.4.6f13-test18.zip`
 - Candidate 18 package SHA-256: `FC971C9FC89A8144234448F1984C9F4BBA2317EBBDF177F8A5B1FE1623668B6D`
+- Published prerelease: `v2.0.1-test18-alpha`
+- Release URL: `https://github.com/xboxnuker-rgb/improved-packagers-ported/releases/tag/v2.0.1-test18-alpha`
 - Release build: zero warnings and zero errors.
 - Static API and Harmony parameter-name verification: passed against the supplied f13 interop assembly.
 - Live-game verification: pending.
