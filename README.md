@@ -5,6 +5,7 @@ Improved Packagers PORTED brings the original Improved Packagers mod to current 
 ## ⬇️ Download Improved Packagers PORTED
 
 [![downloaded](https://img.shields.io/github/downloads/xboxnuker-rgb/improved-packagers-ported/v2.0.1-f13-ported/total?label=downloaded&style=for-the-badge&color=8a2be2)](https://github.com/xboxnuker-rgb/improved-packagers-ported/releases/download/v2.0.1-f13-ported/Improved-Packagers-PORTED-v2.0.1-Schedule-I-f13.zip)
+[![Nexus Mods](https://img.shields.io/badge/Nexus_Mods-live-D98F40?style=for-the-badge)](https://www.nexusmods.com/schedule1/mods/2604)
 [![Support on Patreon](https://img.shields.io/badge/Support_on-Patreon-FF424D?style=for-the-badge&logo=patreon&logoColor=white)](https://www.patreon.com/cw/GSVS_UK_ACM/shop)
 
 ### [⬇️ DOWNLOAD IMPROVED PACKAGERS PORTED](https://github.com/xboxnuker-rgb/improved-packagers-ported/releases/download/v2.0.1-f13-ported/Improved-Packagers-PORTED-v2.0.1-Schedule-I-f13.zip)
