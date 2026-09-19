@@ -1,0 +1,15 @@
+Improved Packagers PORTED
+
+Original project and core work:
+Copyright (c) 2025 GuysWeForgotDre
+https://github.com/GuysWeForgotDre/Improved-Packagers
+
+Schedule I 0.4.6f13 IL2CPP compatibility port:
+Maintained by GSVS UK ACM
+https://github.com/xboxnuker-rgb/improved-packagers-ported
+
+This is an independently maintained compatibility port, not an official release
+by the original author. The original project was released under the MIT License.
+This distribution retains that license and the original copyright notice; see
+LICENSE.txt.
+

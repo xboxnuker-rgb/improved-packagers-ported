@@ -2,7 +2,7 @@
 
 ## Schedule I 0.4.6f13 IL2CPP compatibility port
 
-- Status: `PUBLISHED_V2.0.1_F13_PORTED`
+- Status: `PUBLISHED_V2.0.1_F13_PORTED_NEXUS_PACKAGE_PREP`
 - Maintained repository: `https://github.com/xboxnuker-rgb/improved-packagers-ported`
 - Merge target: `main`
 - Branch: `main`
@@ -16,6 +16,7 @@
 3. The renamed RC3 install check passed: MelonLoader displayed `Improved Packagers PORTED`, `GuysWeForgotDre | Ported by GSVS UK ACM`, the shaded GSVS banner, and `f13-nexus-rc3`.
 4. The owner explicitly approved pushing the polished documentation and publishing the final GitHub release on 2026-09-19.
 5. Do not update or merge the upstream pull request without separate approval.
+6. A separate Nexus-ready package is complete with the verified release DLL, original MIT licence, port notice and plain-text installation guide. Do not replace the live GitHub release asset when publishing it.
 
 Never commit Schedule I, MelonLoader, generated interop, save, log, or packaged artifact files. Local build commands and reference layout are in `README.md`.
 
@@ -424,6 +425,24 @@ RC3 changes release identity and packaging only; candidate 20's passing worker/r
 - Published stable GitHub release: `v2.0.1-f13-ported` at `https://github.com/xboxnuker-rgb/improved-packagers-ported/releases/tag/v2.0.1-f13-ported`.
 - Release tag commit: `066cebeff8965283f36f7af917f1f7288122004d`.
 - The direct ZIP URL and Shields.io `downloaded` badge both returned HTTP 200 after publication; the ZIP response type was `application/octet-stream`.
+
+### Nexus upload package
+
+- Package: `artifacts/Improved-Packagers-PORTED-v2.0.1-NEXUS-Schedule-I-f13.zip`
+- Package SHA-256: `00840EF35DE17E63AC640BEF8FA46AD2816DDC4945946A0B3B0CD520E9614BC8`
+- Package size: 15,079 bytes.
+- DLL SHA-256: `D3068A5C50D24568D5101C0B514C35D8BE8D2E8295B4829EF01F7A4A3366F24B`, exactly matching the tested and published RC3 DLL.
+- Root contents: `ImprovedPackagersPORTED.dll`, `LICENSE.txt`, `NOTICE.txt`, and `README.txt`; there is no nested archive or password.
+- Copy-ready listing fields, permissions guidance, image order, captions and checklist: `docs/NEXUS_UPLOAD.md`.
+- The upload is prepared locally but has not been submitted or published on Nexus Mods.
+
+### Upstream maintenance model
+
+- `origin` is the maintained port at `xboxnuker-rgb/improved-packagers-ported`.
+- `upstream` is GuysWeForgotDre's original `Improved-Packagers` repository.
+- Both histories share upstream commit `4519a1f48e3f461aa78681bb5a48bd683e2b6962` as their merge base; this is a true descendant/fork history rather than a detached code copy.
+- Keep compatibility and presentation changes as reviewable commits on the maintained branch. Fetch and merge future upstream work normally, resolving only genuine overlapping changes.
+- Preserve the original MIT licence and GuysWeForgotDre attribution in source and binary distributions even if GSVS UK ACM becomes the active compatibility maintainer.
 
 ### Pull request handoff
 

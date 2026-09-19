@@ -5,6 +5,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Adhere
 - Standardized the public mod, assembly, DLL, package, and log identity as **Improved Packagers PORTED** while preserving original-author credit.
 - Added a direct installable ZIP link, live GitHub asset download count, illustrated installation guide, gameplay screenshots, and optional maintainer support link.
 - Documented Mod Manager & Phone App as a required dependency.
+- Added a distributable attribution notice, installation README and copy-ready Nexus publication sheet.
 ### Fixed
 - Updated IL2CPP Harmony targets and station UI access for Schedule I 0.4.6f13.
 - First launch no longer reports an error when `UserData/ImprovedPackagers.json` does not exist yet.
