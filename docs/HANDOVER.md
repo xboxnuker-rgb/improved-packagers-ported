@@ -5,13 +5,13 @@
 - Status: `AWAITING_RC3_RENAMED_INSTALL_CHECK`
 - Maintained repository: `https://github.com/xboxnuker-rgb/improved-packagers-ported`
 - Merge target: `main`
-- Branch: `fix/test19-runtime-trace`
+- Branch: `main`
 - Base: upstream `master` at `4519a1f48e3f461aa78681bb5a48bd683e2b6962`
 - Current compatibility implementation: `4312df1f4cecc0564ead11b4290ae887cc589637`
 
 ### Alex: continue from here
 
-1. Continue from `fix/test19-runtime-trace`; candidate 20 passed both isolated and HWE-enabled runtime tests.
+1. Continue from `main`; candidate 20 passed both isolated and HWE-enabled runtime tests.
 2. Nexus RC3 standardizes the visible mod name, log tag, assembly, DLL, ZIP, manifest, README, and attribution as Improved Packagers PORTED.
 3. Install only `ImprovedPackagersPORTED.dll`, then confirm MelonLoader displays `Improved Packagers PORTED` and `GuysWeForgotDre | Ported by GSVS UK ACM` while the RC2 banner and passing worker logic remain intact.
 4. Close the game and record the final RC log/hash before preparing the Nexus Mods package or changing repository/release state.
@@ -397,7 +397,7 @@ The final GitHub release must not require non-technical users to understand the 
 
 - Put a prominent `⬇️ DOWNLOAD IMPROVED PACKAGERS` link at the top of both `README.md` and the release description.
 - Link directly to the named installable ZIP asset, not the release page or either `Source code` archive.
-- Immediately state: extract/copy `ImprovedPackagers.dll` into the game's `Mods` folder.
+- Immediately state: extract/copy `ImprovedPackagersPORTED.dll` into the game's `Mods` folder.
 - Use a short, human-readable asset filename and repeat it beside the link.
 - If the rendered release page is still ambiguous, add an annotated screenshot with an arrow pointing to the correct ZIP.
 - Add the direct link only after the final release asset exists so it cannot silently point at RC/test content.
