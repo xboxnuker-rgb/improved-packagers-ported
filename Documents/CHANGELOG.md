@@ -1,6 +1,10 @@
 # Changelog
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Adheres to [Semantic Versioning](https://semver.org/).
 ## [2.0.1] - 2026-09-17
+### Changed
+- Standardized the public mod, assembly, DLL, package, and log identity as **Improved Packagers PORTED** while preserving original-author credit.
+- Added a direct installable ZIP link, live GitHub asset download count, illustrated installation guide, gameplay screenshots, and optional maintainer support link.
+- Documented Mod Manager & Phone App as a required dependency.
 ### Fixed
 - Updated IL2CPP Harmony targets and station UI access for Schedule I 0.4.6f13.
 - First launch no longer reports an error when `UserData/ImprovedPackagers.json` does not exist yet.

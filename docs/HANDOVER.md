@@ -2,20 +2,20 @@
 
 ## Schedule I 0.4.6f13 IL2CPP compatibility port
 
-- Status: `AWAITING_RC3_RENAMED_INSTALL_CHECK`
+- Status: `READY_TO_PUBLISH_V2.0.1_F13_PORTED`
 - Maintained repository: `https://github.com/xboxnuker-rgb/improved-packagers-ported`
 - Merge target: `main`
 - Branch: `main`
 - Base: upstream `master` at `4519a1f48e3f461aa78681bb5a48bd683e2b6962`
 - Current compatibility implementation: `4312df1f4cecc0564ead11b4290ae887cc589637`
 
-### Alex: continue from here
+### Release handoff
 
 1. Continue from `main`; candidate 20 passed both isolated and HWE-enabled runtime tests.
-2. Nexus RC3 standardizes the visible mod name, log tag, assembly, DLL, ZIP, manifest, README, and attribution as Improved Packagers PORTED.
-3. Install only `ImprovedPackagersPORTED.dll`, then confirm MelonLoader displays `Improved Packagers PORTED` and `GuysWeForgotDre | Ported by GSVS UK ACM` while the RC2 banner and passing worker logic remain intact.
-4. Close the game and record the final RC log/hash before preparing the Nexus Mods package or changing repository/release state.
-5. Do not publish, push, or update the upstream pull request without fresh approval.
+2. RC3 standardizes the visible mod name, log tag, assembly, DLL, ZIP, manifest, README, and attribution as Improved Packagers PORTED.
+3. The renamed RC3 install check passed: MelonLoader displayed `Improved Packagers PORTED`, `GuysWeForgotDre | Ported by GSVS UK ACM`, the shaded GSVS banner, and `f13-nexus-rc3`.
+4. The owner explicitly approved pushing the polished documentation and publishing the final GitHub release on 2026-09-19.
+5. Do not update or merge the upstream pull request without separate approval.
 
 Never commit Schedule I, MelonLoader, generated interop, save, log, or packaged artifact files. Local build commands and reference layout are in `README.md`.
 
@@ -418,7 +418,9 @@ RC3 changes release identity and packaging only; candidate 20's passing worker/r
 - README download counter: live Shields.io badge for tag `v2.0.1-f13-ported`, labelled `downloaded` and linked directly to the installable ZIP.
 - Release build: zero warnings and zero errors; all exact f13 API checks passed.
 - Compiled metadata inspection confirms the assembly name, display name, version, author attribution, build identity, and banner credit.
-- Live-game verification: pending one launch after the filename/display-name transition.
+- Live-game verification: **passed** after the filename/display-name transition. The installed file and loaded assembly were both `ImprovedPackagersPORTED.dll`; MelonLoader showed the standardized display name and full author/porter attribution, and the startup log used `[Improved Packagers PORTED]` with build identity `f13-nexus-rc3`.
+- Public documentation includes the supplied installation, dependency, enabled-state, assignment, unpackage-mode, and active-worker screenshots under `docs/images/`.
+- Mod Manager & Phone App is documented as required. The Patreon badge/link is optional maintainer support and does not alter the original-author attribution.
 
 ### Pull request handoff
 
