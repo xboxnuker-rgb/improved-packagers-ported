@@ -2,18 +2,18 @@
 
 ## Schedule I 0.4.6f13 IL2CPP compatibility port
 
-- Status: `AWAITING_NEXUS_RC2_VISUAL_PLAYTEST`
+- Status: `AWAITING_RC3_RENAMED_INSTALL_CHECK`
 - Maintained repository: `https://github.com/xboxnuker-rgb/improved-packagers-ported`
 - Merge target: `main`
 - Branch: `fix/test19-runtime-trace`
 - Base: upstream `master` at `4519a1f48e3f461aa78681bb5a48bd683e2b6962`
-- Current compatibility implementation: `763e43864f04deca578ddd633a5aec6a4829392c`
+- Current compatibility implementation: `4312df1f4cecc0564ead11b4290ae887cc589637`
 
 ### Alex: continue from here
 
 1. Continue from `fix/test19-runtime-trace`; candidate 20 passed both isolated and HWE-enabled runtime tests.
-2. Nexus RC2 adds only the ANSI-shaded purple/green GSVS banner and a distinct `f13-nexus-rc2` build identity; the passing worker logic is unchanged.
-3. Playtest the installed RC with the normal mod set. Confirm the banner colours, bevels, alignment, and plain-log output are readable and unpack delivery remains stable.
+2. Nexus RC3 standardizes the visible mod name, log tag, assembly, DLL, ZIP, manifest, README, and attribution as Improved Packagers PORTED.
+3. Install only `ImprovedPackagersPORTED.dll`, then confirm MelonLoader displays `Improved Packagers PORTED` and `GuysWeForgotDre | Ported by GSVS UK ACM` while the RC2 banner and passing worker logic remain intact.
 4. Close the game and record the final RC log/hash before preparing the Nexus Mods package or changing repository/release state.
 5. Do not publish, push, or update the upstream pull request without fresh approval.
 
@@ -401,6 +401,24 @@ The final GitHub release must not require non-technical users to understand the 
 - Use a short, human-readable asset filename and repeat it beside the link.
 - If the rendered release page is still ambiguous, add an annotated screenshot with an arrow pointing to the correct ZIP.
 - Add the direct link only after the final release asset exists so it cannot silently point at RC/test content.
+
+### Nexus RC3 standardized PORTED identity
+
+RC3 changes release identity and packaging only; candidate 20's passing worker/routing implementation and RC2's approved shaded banner remain unchanged.
+
+- RC3 source: `4312df1f4cecc0564ead11b4290ae887cc589637`
+- Melon/display/log name: `Improved Packagers PORTED`
+- Assembly and install filename: `ImprovedPackagersPORTED.dll`
+- Melon author: `GuysWeForgotDre | Ported by GSVS UK ACM`
+- Build identity: `f13-nexus-rc3`
+- Final asset name: `Improved-Packagers-PORTED-v2.0.1-Schedule-I-f13.zip`
+- RC3 DLL SHA-256: `D3068A5C50D24568D5101C0B514C35D8BE8D2E8295B4829EF01F7A4A3366F24B`
+- RC3 package SHA-256: `69B32F9FE577B8EABDC3CB36ED0489183F9477345ED842B142D6CFE2F987B0EC`
+- Package contents: one root-level `ImprovedPackagersPORTED.dll`.
+- README download counter: live Shields.io badge for tag `v2.0.1-f13-ported`, labelled `downloaded` and linked directly to the installable ZIP.
+- Release build: zero warnings and zero errors; all exact f13 API checks passed.
+- Compiled metadata inspection confirms the assembly name, display name, version, author attribution, build identity, and banner credit.
+- Live-game verification: pending one launch after the filename/display-name transition.
 
 ### Pull request handoff
 
