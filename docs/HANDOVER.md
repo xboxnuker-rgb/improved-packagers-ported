@@ -434,6 +434,8 @@ RC3 changes release identity and packaging only; candidate 20's passing worker/r
 - DLL SHA-256: `D3068A5C50D24568D5101C0B514C35D8BE8D2E8295B4829EF01F7A4A3366F24B`, exactly matching the tested and published RC3 DLL.
 - Root contents: `ImprovedPackagersPORTED.dll`, `LICENSE.txt`, `NOTICE.txt`, and `README.txt`; there is no nested archive or password.
 - Copy-ready listing fields, permissions guidance, image order, captions and checklist: `docs/NEXUS_UPLOAD.md`.
+- Polished long-form rich-text master (about 1,450 words): `docs/NEXUS_DESCRIPTION.md`.
+- Current Nexus rules require disclosure of generative-AI-assisted code through the available `AI-Generated Content` tag. Do not select the `Nexus Mods Turns 25` event tag because its 2026 rules prohibit generative AI in code, assets or dialogue.
 - The upload is prepared locally but has not been submitted or published on Nexus Mods.
 
 ### Upstream maintenance model

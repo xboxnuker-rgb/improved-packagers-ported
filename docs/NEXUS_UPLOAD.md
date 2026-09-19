@@ -26,13 +26,28 @@ Employees
 
 **Suggested tags**
 
-Gameplay, Employees, Utilities, AI Assisted
+Gameplay, Bug Fixes, Quality of Life, Utilities for Players, AI-Generated Content
 
-Use **AI Assisted**, not AI Generated: the compatibility work was human-directed, reviewed and repeatedly play-tested, with Codex used as a development assistant.
+Nexus currently exposes **AI-Generated Content** as the disclosure tag and its submission rules explicitly include generative-AI-assisted code. Select it, then state clearly in the description that Codex assisted development/documentation while all changes were human-directed, reviewed, compiled and play-tested. The mod contains no generated image, audio or dialogue assets.
+
+Do **not** select **Nexus Mods Turns 25**. The 2026 anniversary event excludes submissions using generative AI in code, assets or dialogue.
 
 **Author display**
 
-GuysWeForgotDre (original author) | Ported and maintained by GSVS UK ACM
+GuysWeForgotDre | Ported by GSVS UK ACM
+
+## General-page field map
+
+- **Mod Name:** `Improved Packagers PORTED - f13 IL2CPP Compatibility Port`
+- **Game:** `Schedule I` (already locked by the draft)
+- **Category:** `Employees`
+- **Mod version:** `2.0.1` — replace the draft default `1.0`
+- **Author or team name:** `GuysWeForgotDre | Ported by GSVS UK ACM` — replace the account-name placeholder
+- **Short description:** use the one-line summary above
+- **Translation of another mod:** leave unchecked; this is a compatibility port, not a language translation
+- **Community tagging:** leave enabled
+- **Download mirrors:** leave empty; Nexus hosts the verified main file and GitHub remains the source/release reference
+- **Save/Publish:** save the completed draft and preview it. Do not press **Publish** until the owner has reviewed the rendered page, requirements, file preview, permissions and images.
 
 ## Requirements
 
@@ -42,56 +57,21 @@ GuysWeForgotDre (original author) | Ported and maintained by GSVS UK ACM
 
 ## Full description
 
-```text
-IMPROVED PACKAGERS PORTED
+Use the polished master copy in [`docs/NEXUS_DESCRIPTION.md`](NEXUS_DESCRIPTION.md). It is structured specifically for the rich-text editor with an opening callout, feature list, requirements, numbered installation, usage guides, compatibility evidence, troubleshooting, attribution, AI disclosure and full changelog.
 
-Original mod by GuysWeForgotDre.
-Schedule I 0.4.6f13 IL2CPP compatibility port maintained by GSVS UK ACM.
+### Rich-text formatting plan
 
-This independently maintained port restores Improved Packagers on the current f13 IL2CPP build. Assigned Packagers can follow a Packaging Station's pack/unpack setting, use the station, move loose unpacked output into storage and load vehicles parked at Loading Bays.
-
-WHY "PORTED"?
-
-The original release no longer works correctly on the f13 IL2CPP game build. PORTED is included throughout the mod name, DLL and log output so it is easy to distinguish this build from the original. Do not install both versions together.
-
-REQUIREMENTS
-
-- Schedule I 0.4.6f13 IL2CPP
-- MelonLoader 0.7.0 Open-Beta
-- Mod Manager & Phone App: https://www.nexusmods.com/schedule1/mods/397
-
-Mod Manager & Phone App is REQUIRED, not merely recommended.
-
-INSTALLATION
-
-1. Close the game.
-2. Open your Schedule I installation folder, then open the Mods folder.
-3. Remove any old/original Improved Packagers DLL: ImprovedPackagers.dll, ImprovedPackagersPORTED.dll or Main-ImprovedPackagers.dll.
-4. Install the requirements above.
-5. Copy ImprovedPackagersPORTED.dll from the download into Schedule I/Mods.
-6. Launch the game and confirm Improved Packagers PORTED is enabled in the in-game Mod Manager.
-
-Keep only one Improved Packagers DLL in the Mods folder.
-
-COMPATIBILITY AND TESTING
-
-- Built for Schedule I 0.4.6f13 IL2CPP.
-- Play-tested through the unpack, worker pickup and delivery cycle.
-- Tested both in isolation and with HWE 2.2.3 enabled.
-- This port makes no new Mono compatibility claim.
-
-CREDITS, SOURCE AND LICENCE
-
-Improved Packagers and its core work were created by GuysWeForgotDre:
-https://github.com/GuysWeForgotDre/Improved-Packagers
-
-The f13 IL2CPP compatibility port is maintained by GSVS UK ACM:
-https://github.com/xboxnuker-rgb/improved-packagers-ported
-
-The original project was released under the MIT License. This upload retains the original copyright and licence text. This is an independently maintained compatibility port, not an official release by the original author. Attempts were made to contact the original author before publication; no response had been received at the time of upload.
-
-For issues, source, illustrated setup help and the latest release, use the port repository above.
-```
+- Format `IMPROVED PACKAGERS PORTED` as the largest heading and colour it purple to match the in-game GSVS banner.
+- Format the one-line compatibility statement beneath it as a quote/callout; bold the original author and maintainer names.
+- Use heading level 2 for each major section and heading level 3 for troubleshooting/credit subsections.
+- Preserve numbered installation and usage steps as numbered lists, and features/testing notes as bullets.
+- Make both warnings into block quotes with bold lead text.
+- Link the dependency, original Nexus page, original source and maintained source directly.
+- Insert `packager-unpacking.png` after the opening section as the hero image.
+- Insert `unpackage-mode-bricks.png` and `handler-station-assignment.png` around “Using automatic unpacking”.
+- Insert `install-folder.png`, `mod-manager-enabled.png` and `phone-app-required.png` around “Requirements” and “Installation”.
+- Use restrained purple and green accents for headings/callouts; keep body text in the site default for readability.
+- Add horizontal rules between the major sections, as represented by `---` in the master copy.
 
 ## Main file
 
@@ -127,7 +107,8 @@ Main file. Includes ImprovedPackagersPORTED.dll, the original MIT licence, port 
 - **Original work/assets:** Based on Improved Packagers by GuysWeForgotDre. Link the original [GitHub repository](https://github.com/GuysWeForgotDre/Improved-Packagers) and [Nexus page](https://www.nexusmods.com/schedule1/mods/1142).
 - **Permission basis:** The original project is published under the MIT License, which expressly permits use, modification and redistribution when its copyright and permission notice are retained. Both are included unmodified as `LICENSE.txt`.
 - **Other-site upload permission:** The original Nexus page also states that uploads to other sites are permitted with credit. Do not describe the port as endorsed by or official to the original author.
-- **AI disclosure:** Select **AI Assisted**. Codex assisted development and documentation; changes were human-directed and validated through source inspection, builds and in-game play-testing.
+- **AI disclosure:** Select **AI-Generated Content**, the available Nexus disclosure tag. Explain that Codex assisted code investigation and documentation, while the work was human-directed, reviewed, built and repeatedly play-tested; no generated media assets are included.
+- **Anniversary event:** Do not select **Nexus Mods Turns 25** because its rules prohibit generative-AI-assisted code.
 - **Donation Points:** Opt out initially. Revisit only after the original author responds and any desired arrangement is clear.
 - **Adult content:** No.
 - **Paid content:** No.
@@ -157,6 +138,8 @@ Use `packager-unpacking.png` as the primary image.
 - **Original source:** https://github.com/GuysWeForgotDre/Improved-Packagers
 - **Original Nexus page:** https://www.nexusmods.com/schedule1/mods/1142
 - **Required dependency:** https://www.nexusmods.com/schedule1/mods/397
+- **Nexus file-submission rules:** https://help.nexusmods.com/article/28-file-submission-guidelines
+- **2026 anniversary rules (not eligible):** https://help.nexusmods.com/article/175-nexus-mods-25th-anniversary-mod-drive-guidelines
 
 The maintainer-support link remains available on GitHub. Keeping the Nexus description focused on the mod, attribution and support documentation avoids making the port look like a claim over the original author's work.
 
@@ -164,12 +147,16 @@ The maintainer-support link remains available on GitHub. Keeping the Nexus descr
 
 - [ ] Select Schedule I and the Employees category.
 - [ ] Keep **PORTED** in the mod name and file title.
+- [ ] Change the draft version from `1.0` to `2.0.1`.
+- [ ] Set the author/team field to `GuysWeForgotDre | Ported by GSVS UK ACM`.
 - [ ] Mark Mod Manager & Phone App as a required dependency.
-- [ ] Select the **AI Assisted** tag/disclosure.
+- [ ] Select Gameplay, Bug Fixes, Quality of Life, Utilities for Players and **AI-Generated Content**.
+- [ ] Do not select **Nexus Mods Turns 25**.
+- [ ] Leave “translation of another mod” unchecked, community tagging enabled and mirrors empty.
 - [ ] Upload the Nexus ZIP from `artifacts/`, not GitHub's source-code archive.
+- [ ] Apply the rich-text formatting and image placement plan from `docs/NEXUS_DESCRIPTION.md`.
 - [ ] Upload the six images above and make `packager-unpacking.png` primary.
 - [ ] Confirm the visible credit says original author GuysWeForgotDre and port maintainer GSVS UK ACM.
 - [ ] Confirm `LICENSE.txt`, `NOTICE.txt` and `README.txt` appear in the file preview.
 - [ ] Expect a DLL security scan or temporary manual-review quarantine.
-- [ ] Preview the page, test the download once, then publish.
-
+- [ ] Save and preview the page, test the download once, and leave final **Publish** approval to the owner.
