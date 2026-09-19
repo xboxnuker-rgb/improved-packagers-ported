@@ -2,7 +2,7 @@
 
 ## Schedule I 0.4.6f13 IL2CPP compatibility port
 
-- Status: `READY_TO_PUBLISH_V2.0.1_F13_PORTED`
+- Status: `PUBLISHED_V2.0.1_F13_PORTED`
 - Maintained repository: `https://github.com/xboxnuker-rgb/improved-packagers-ported`
 - Merge target: `main`
 - Branch: `main`
@@ -421,6 +421,9 @@ RC3 changes release identity and packaging only; candidate 20's passing worker/r
 - Live-game verification: **passed** after the filename/display-name transition. The installed file and loaded assembly were both `ImprovedPackagersPORTED.dll`; MelonLoader showed the standardized display name and full author/porter attribution, and the startup log used `[Improved Packagers PORTED]` with build identity `f13-nexus-rc3`.
 - Public documentation includes the supplied installation, dependency, enabled-state, assignment, unpackage-mode, and active-worker screenshots under `docs/images/`.
 - Mod Manager & Phone App is documented as required. The Patreon badge/link is optional maintainer support and does not alter the original-author attribution.
+- Published stable GitHub release: `v2.0.1-f13-ported` at `https://github.com/xboxnuker-rgb/improved-packagers-ported/releases/tag/v2.0.1-f13-ported`.
+- Release tag commit: `066cebeff8965283f36f7af917f1f7288122004d`.
+- The direct ZIP URL and Shields.io `downloaded` badge both returned HTTP 200 after publication; the ZIP response type was `application/octet-stream`.
 
 ### Pull request handoff
 
