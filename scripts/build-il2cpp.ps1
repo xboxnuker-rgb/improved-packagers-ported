@@ -23,7 +23,7 @@ if ($LASTEXITCODE) {
     exit $LASTEXITCODE
 }
 
-$outputPath = Join-Path $repositoryRoot "bin\Il2Cpp\ImprovedPackagers.dll"
+$outputPath = Join-Path $repositoryRoot "bin\Il2Cpp\ImprovedPackagersPORTED.dll"
 if (-not (Test-Path -LiteralPath $outputPath -PathType Leaf)) {
     throw "Build completed without the expected output: $outputPath"
 }

@@ -3,7 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <OutputType>Library</OutputType>
     <RootNamespace>ImprovedPackagers</RootNamespace>
-    <AssemblyName>ImprovedPackagers</AssemblyName>
+    <AssemblyName>ImprovedPackagersPORTED</AssemblyName>
     <Version>2.0.1</Version>
     <LangVersion>8.0</LangVersion>
     <Nullable>disable</Nullable>

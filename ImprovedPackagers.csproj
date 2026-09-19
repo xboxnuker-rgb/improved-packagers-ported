@@ -3,9 +3,9 @@
   <Import Project="Documents\local.build.props" Condition="Exists('Documents\local.build.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <Authors>Dre</Authors>
-    <PackageId>ImprovedPackagers</PackageId>
-    <Description>Enables Schedule I Packagers to unpack products and load vehicles parked in Loading Bays</Description>
+    <Authors>GuysWeForgotDre; GSVS UK ACM</Authors>
+    <PackageId>ImprovedPackagersPORTED</PackageId>
+    <Description>PORTED for Schedule I f13: enables Packagers to unpack products and load vehicles parked in Loading Bays</Description>
     <RepositoryUrl>https://github.com/xboxnuker-rgb/improved-packagers-ported</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
@@ -16,7 +16,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ImprovedPackagers</RootNamespace>
-    <AssemblyName>ImprovedPackagers</AssemblyName>
+    <AssemblyName>ImprovedPackagersPORTED</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -106,6 +106,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\ImprovedPackagers.cs" />
     <Compile Include="Source\ReflectionHelper.cs" />
+    <Compile Include="Source\RuntimeTrace.cs" />
+    <Compile Include="Source\StartupBanner.cs" />
     <Compile Include="Source\StationModeRegistry.cs" />
   </ItemGroup>
   <ItemGroup>

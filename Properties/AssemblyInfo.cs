@@ -3,7 +3,7 @@ using ImprovedPackagers;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: MelonInfo(typeof(ImprovedPackagers.ImprovedPackagers), ImprovedPackagers.ImprovedPackagers.ModName, ImprovedPackagers.ImprovedPackagers.Version, "GuysWeForgotDre")]
+[assembly: MelonInfo(typeof(ImprovedPackagers.ImprovedPackagers), ImprovedPackagers.ImprovedPackagers.ModName, ImprovedPackagers.ImprovedPackagers.Version, ImprovedPackagers.ImprovedPackagers.Author)]
 [assembly: MelonGame("TVGS", "Schedule I")]
 
 [assembly: AssemblyTitle(ImprovedPackagers.ImprovedPackagers.ModName)]

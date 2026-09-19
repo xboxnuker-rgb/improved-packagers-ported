@@ -15,10 +15,11 @@ namespace ImprovedPackagers
 
     public class ImprovedPackagers : MelonMod
     {
-        public const string ModName = "Improved Packagers";
+        public const string ModName = "Improved Packagers PORTED";
         public const string Version = "2.0.1";
-        public const string ModDesc = "Enables Packagers to unpack product at Packaging Stations, and load vehicles parked in Loading Bays";
-        public const string BuildIdentity = "f13-nexus-rc2";
+        public const string Author = "GuysWeForgotDre | Ported by GSVS UK ACM";
+        public const string ModDesc = "PORTED for Schedule I f13: enables Packagers to unpack product and load vehicles parked in Loading Bays";
+        public const string BuildIdentity = "f13-nexus-rc3";
 
         private MelonPreferences_Category PropertyGroup;
 #if Il2Cpp
