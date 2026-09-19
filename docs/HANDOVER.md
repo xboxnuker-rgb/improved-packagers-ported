@@ -2,7 +2,7 @@
 
 ## Schedule I 0.4.6f13 IL2CPP compatibility port
 
-- Status: `PUBLISHED_V2.0.1_F13_PORTED_NEXUS_PACKAGE_PREP`
+- Status: `PUBLISHED_V2.0.1_F13_PORTED_NEXUS_DRAFT_READY`
 - Maintained repository: `https://github.com/xboxnuker-rgb/improved-packagers-ported`
 - Merge target: `main`
 - Branch: `main`
@@ -436,7 +436,14 @@ RC3 changes release identity and packaging only; candidate 20's passing worker/r
 - Copy-ready listing fields, permissions guidance, image order, captions and checklist: `docs/NEXUS_UPLOAD.md`.
 - Polished long-form rich-text master (about 1,450 words): `docs/NEXUS_DESCRIPTION.md`.
 - Current Nexus rules require disclosure of generative-AI-assisted code through the available `AI-Generated Content` tag. Do not select the `Nexus Mods Turns 25` event tag because its 2026 rules prohibit generative AI in code, assets or dialogue.
-- The upload is prepared locally but has not been submitted or published on Nexus Mods.
+- Nexus draft: `https://www.nexusmods.com/schedule1/mods/2604`.
+- Draft title/version/category: `Improved Packagers PORTED - f13 IL2CPP Compatibility Port`, `2.0.1`, `Employees`.
+- General page uses the full formatted BBCode description, correct original/port attribution, and Gameplay, Bug Fixes, Quality of Life, Utilities for Players, and AI-Generated Content tags.
+- Media page has the active-worker header and six captioned screenshots; the active-worker image is the gallery thumbnail.
+- The verified Nexus ZIP is uploaded as the primary Main file with file version `2.0.1`, description, and seven-line changelog. Nexus reports the file as `Safe to use`.
+- Requirements list `Mod Manager - Phone App` as a required Nexus mod and MelonLoader 0.7.0 Open-Beta as an external resource.
+- Permissions declare third-party code, prominently credit GuysWeForgotDre and ecrgr, and reproduce the original MIT licence as the custom permission text.
+- The draft is complete and previewed but remains **unpublished**. Do not press the final Nexus `Publish` button without explicit owner confirmation at action time.
 
 ### Upstream maintenance model
 
